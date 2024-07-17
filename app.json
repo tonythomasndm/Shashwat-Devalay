@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "SarvSeva",
+    "slug": "SarvSeva",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/SarvSeva.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.arpankumar.SarvSeva"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photo",
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
+        }
+        
+      
+      ]
+    ],
+    "web": {
+      "favicon": "./assets/SarvSeva.png"
+    },
+    "jsEngine": "hermes",
+    "extra": {
+      "eas": {
+        "projectId": "4456a247-608a-431b-a8ef-6d463308244e"
+      }
+    }
+  }
+}
