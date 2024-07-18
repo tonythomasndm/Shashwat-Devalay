@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { styles, SIZES, COLOURS } from "../styles";
 import { useContext, useState } from "react";
 import { FIRESTORE_DB } from "../../FirebaseConfig";
-import { doc, collection, setDoc, addDoc } from "firebase/firestore";
+import { doc, collection, setDoc, addDoc, getDoc } from "firebase/firestore";
 import AppContext from "./../../AppContext";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
@@ -43,10 +43,17 @@ const Signup = () => {
       setError("Please complete all fields!");
       return;
     }
+  
     const docsRef = collection(FIRESTORE_DB, mode);
     const docRef = doc(docsRef, phoneNumber);
-    console.log(location)
+  
     try {
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setError("An account with this phone number already exists!");
+        return;
+      }
+  
       await setDoc(docRef, {
         name: name,
         address: address,
@@ -55,18 +62,19 @@ const Signup = () => {
         phoneNumber: phoneNumber,
         pincode: pincode,
         gender: gender,
-         latitude: location["coords"]["latitude"],
+        latitude: location["coords"]["latitude"],
         longitude: location["coords"]["longitude"],
       });
+  
       if (mode === "Admin") {
-        const infrastructureDocsRef= collection(FIRESTORE_DB,"Infrastructure");
-        const infrastructureDocRef = doc(infrastructureDocsRef,phoneNumber)
-        setDoc(infrastructureDocRef, {
+        const infrastructureDocsRef = collection(FIRESTORE_DB, "Infrastructure");
+        const infrastructureDocRef = doc(infrastructureDocsRef, phoneNumber);
+        await setDoc(infrastructureDocRef, {
           name: infrastructureName,
           latitude: location.coords.latitude,
-          longitude:location.coords.longitude,
-          adminId:phoneNumber
-        })
+          longitude: location.coords.longitude,
+          adminId: phoneNumber,
+        });
         setAdminId(phoneNumber);
         setInfraId(phoneNumber);
       } else if (mode === "Volunteer") {
@@ -74,11 +82,13 @@ const Signup = () => {
       } else {
         setSeekerId(phoneNumber);
       }
+  
       navigation.replace("home");
     } catch (e) {
       setError(e.message);
     }
   };
+  
 
   const genderOptions = [
     { label: 'Male', value: 'Male', width: "24.5%" },

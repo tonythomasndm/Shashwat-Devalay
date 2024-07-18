@@ -214,6 +214,7 @@ const EventCreateEditAndSuggest = ({ type, eventDetails, setEditMode, useCase, e
     setEndDate(null);
     setRegistrationDeadline(null);
     setVolunteerRoles([{ role: "", count: "" }]);
+    setTimeSlots([]);
     setTimeSlots([{ startTime: null, endTime: null }]);
     setError("");
   };
