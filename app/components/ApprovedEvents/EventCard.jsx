@@ -58,7 +58,7 @@ const EventCard = ({ item, handlePress }) => {
           <Text style={styles.text_component(SIZES.medium)}>{item.venue}</Text>
         </View>
         {areRegistrationsClosed(item.registrationDeadline) ? (
-          <Text style={[styles.error_text(SIZES.medium), { color: "green" }]}>
+          <Text style={[styles.error_text(SIZES.medium), { color: "red" }]}>
             Registrations Closed
           </Text>
         ) : (
