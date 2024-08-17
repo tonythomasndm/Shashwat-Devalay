@@ -7,8 +7,6 @@ import { useNavigation } from '@react-navigation/native';
 import AppContext from "../../../AppContext";
 
 
-export const SellerMessageContext = createContext({});
-
 const SellerMessages = () => {
   
     //const { type } = route.params;
@@ -43,7 +41,6 @@ const SellerMessages = () => {
                 ...chatDoc.data()};
             });
             data = await Promise.all(promises);
-            console.log('data - ', data);
           }
           setMessageList(data);
         });

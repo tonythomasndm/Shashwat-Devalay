@@ -19,10 +19,9 @@ const AdminEnrollments = ({ type }) => {
             .filter((event) => {
               const startDate = event.startDate.toDate();
               const endDate = event.endDate.toDate();
-              return startDate >= currentDate && endDate >= currentDate;
+              return !(startDate <= currentDate && endDate <= currentDate);
             })
             .sort((a, b) => a.endDate.toDate() - b.endDate.toDate()); // Sort by endDate ascending
-  
           return currentEvents;
   };
   
