@@ -39,3 +39,6 @@ yarn-error.*
 
 # Program Data
 %ProgramData%
+
+# EAS Login
+eas.json
