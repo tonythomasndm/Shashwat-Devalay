@@ -36,11 +36,6 @@
     "web": {
       "favicon": "./assets/SarvSeva.png"
     },
-    "jsEngine": "hermes",
-    "extra": {
-      "eas": {
-        "projectId": "7eb131c3-c3b2-4c1d-9f44-2eae1c17b909"
-      }
-    }
+    "jsEngine": "hermes"
   }
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
     Text,
     View,
@@ -10,8 +10,9 @@ import {
 import { FIRESTORE_DB } from "../../../FirebaseConfig";
 import { collection, onSnapshot } from "firebase/firestore";
 import { useNavigation } from '@react-navigation/native';
-
+import AppContext from '../../../AppContext';
 const SwarojgarBrowseShop = (props) => {
+  const { infraId } = useContext(AppContext);
   const [shopsList, setShopsList] = useState([]);
   const [error, setError] = useState("");
   const navigation = useNavigation();
@@ -34,7 +35,12 @@ const SwarojgarBrowseShop = (props) => {
             id: doc.id,
             ...doc.data(),
           }));
-          setShopsList(shops);
+
+          const filteredShops = shops.filter(shop => shop.infraId === infraId);
+
+          setShopsList(filteredShops); // Set filtered shops to the list
+
+          //setShopsList(shops);
           //Arpan shops to be filtered by infra
           setError(""); // Clear error state
         });

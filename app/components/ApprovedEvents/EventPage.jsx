@@ -555,7 +555,7 @@ const applicationStatus = (volunteersRegistered, volunteersApplications, volunte
             {
               mode === "Volunteer" && ( <View>
               <Text style={[styles.header(SIZES.large), { textAlign: "left", fontWeight: 600, lineSpacing: "15%", padding: 0, margin: 0, paddingVertical: "5%" }]}>Your Application Status</Text>
-              <Text style={[styles.text("left", SIZES.medium, COLOURS.gray), { lineSpacing: "15%", padding: 0, margin: 0 }]}>{applicationStatus(volunteersRegistered, volunteersApplications, volunteersRejected, volunteerId)}</Text>
+              <Text style={[styles.text("left", SIZES.medium, COLOURS.primary), { lineSpacing: "15%", padding: 0, margin: 0, fontWeight:"bold" }]}>{applicationStatus(volunteersRegistered, volunteersApplications, volunteersRejected, volunteerId)}</Text>
             </View>)
             }
             {/* Above here the code is correct and are not to be changed - you can change the functions applyforevent/ unapplyforevent / selectrole  functions - You need to implement the logic for the volunteer to apply for an event and withdraw from it realtime  */}
@@ -604,7 +604,7 @@ const applicationStatus = (volunteersRegistered, volunteersApplications, volunte
       !volunteersRejected[volunteerId] ? (
       <View>
         <TouchableOpacity
-          style={styles.button(COLOURS.black, "80%")}
+          style={styles.button(COLOURS.gray, "80%")}
           onPress={() => withdrawApplication()}
         >
           <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
@@ -613,23 +613,19 @@ const applicationStatus = (volunteersRegistered, volunteersApplications, volunte
         </TouchableOpacity>
       </View>):(
         <View>
-          <View style={styles.button(COLOURS.black, "80%")}>
-            <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
+            <Text style={[styles.text("center", SIZES.large, COLOURS.primary),{fontWeight:"bold"}]}>
               Rejected for {item.volunteersRejected[volunteerId]}
             </Text>
-          </View>
         </View>
       )
     )
   ) : (
     <View>
-      <View style={styles.button(COLOURS.black, "80%")}>
-        <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
+        <Text style={[styles.text("center", SIZES.large, COLOURS.primary),{fontWeight:"bold"}]}>
           {
-            applicationStatus(volunteersRegistered, volunteersApplications, volunteersRejected, volunteerId)
+            
           }
         </Text>
-      </View>
     </View>
   )
 )
