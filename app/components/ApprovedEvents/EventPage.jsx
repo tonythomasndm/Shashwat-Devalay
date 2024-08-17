@@ -469,7 +469,7 @@ const applicationStatus = (volunteersRegistered, volunteersApplications, volunte
                     !hasSeekerRegistered(seekersRegistered, seekerId) ? (
                       seekerEstimate > 0 ? (
                     <TouchableOpacity
-                      style={[styles.button(COLOURS.primary,"80%")]}
+                      style={[styles.button(COLOURS.primary,"60%")]}
                       onPress={registerForEvent}
                     >
                       <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
@@ -477,12 +477,12 @@ const applicationStatus = (volunteersRegistered, volunteersApplications, volunte
                       </Text>
                     </TouchableOpacity>
                     ):(
-                      <View style={styles.button(COLOURS.black,"80%")}>
-                      <Text style={[styles.text("center", SIZES.large, COLOURS.white)]} >No spots left</Text></View>
+
+                      <Text style={[styles.text("center", SIZES.large, COLOURS.red),{fontWeight:"bold"}]} >No spots left</Text>
                     )
                     ):(
                       <TouchableOpacity
-                      style={[styles.button(COLOURS.black,"80%")]}
+                      style={[styles.button(COLOURS.black,"60%")]}
                       onPress={ withdrawFromEvent}
                     >
                       <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
@@ -506,7 +506,7 @@ const applicationStatus = (volunteersRegistered, volunteersApplications, volunte
                   !editMode && (
                               <View>
                                 <TouchableOpacity
-                                  style={[styles.button(COLOURS.primary,"80%")]}
+                                  style={[styles.button(COLOURS.primary,"60%")]}
                                   onPress={() => setEditMode(true)}
                                 >
                                   <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
@@ -514,7 +514,7 @@ const applicationStatus = (volunteersRegistered, volunteersApplications, volunte
                                   </Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                  style={[styles.button(COLOURS.red,"80%")]}
+                                  style={[styles.button(COLOURS.red,"60%")]}
                                   onPress={deleteEvent}
                                 >
                                   <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
@@ -528,21 +528,21 @@ const applicationStatus = (volunteersRegistered, volunteersApplications, volunte
 
                <View>
                 <TouchableOpacity
-                 style={[styles.button(COLOURS.primary,"80%"),{marginVertical:"3%",maxWidth:"90%", alignSelf:"center"}]}
+                 style={[styles.button(COLOURS.primary,"60%"),{marginVertical:"3%",maxWidth:"90%", alignSelf:"center"}]}
                                   onPress={() => setEditMode(true)} >
                                     <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
                                     Edit the details
                                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                 style={[styles.button(COLOURS.green,"80%"), {marginVertical:"3%",maxWidth:"90%", alignSelf:"center"}]}
+                 style={[styles.button(COLOURS.green,"60%"), {marginVertical:"3%",maxWidth:"90%", alignSelf:"center"}]}
                                   onPress={acceptSuggestion} >
                                     <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
                                     Accept Suggestion
                                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                 style={[styles.button(COLOURS.red,"80%"), {marginVertical:"3%",maxWidth:"90%", alignSelf:"center"}]}
+                 style={[styles.button(COLOURS.red,"60%"), {marginVertical:"3%",maxWidth:"90%", alignSelf:"center"}]}
                                   onPress={deleteSuggestion} >
                                     <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
                                     Delete Suggestion
@@ -581,7 +581,7 @@ const applicationStatus = (volunteersRegistered, volunteersApplications, volunte
     </Picker>
   </View>
   <TouchableOpacity
-          style={[styles.button(COLOURS.primary, "80%")]}
+          style={[styles.button(COLOURS.primary, "60%")]}
           onPress={applyForRole}
         >
           <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
@@ -591,7 +591,7 @@ const applicationStatus = (volunteersRegistered, volunteersApplications, volunte
   </>
 )}
         {!selectVolunteerRoleMode && <TouchableOpacity
-          style={[styles.button(COLOURS.primary, "80%")]}
+          style={[styles.button(COLOURS.primary, "60%")]}
           onPress={selectRole}
         >
           <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
