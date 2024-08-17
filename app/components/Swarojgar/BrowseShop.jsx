@@ -35,6 +35,7 @@ const SwarojgarBrowseShop = (props) => {
             ...doc.data(),
           }));
           setShopsList(shops);
+          //Arpan shops to be filtered by infra
           setError(""); // Clear error state
         });
 

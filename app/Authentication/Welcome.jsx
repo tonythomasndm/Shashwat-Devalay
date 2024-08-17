@@ -84,6 +84,7 @@ const Welcome = () => {
     return (
         <SafeAreaView style={styles.container}>
             <FlatList
+                showsVerticalScrollIndicator={false}
                 ListHeaderComponent={
                     <View>
                         <Text style={styles.header(SIZES.xLarge)}>
@@ -97,7 +98,7 @@ const Welcome = () => {
                 data={Roles}
                 renderItem={({ item }) => (
                     <TouchableOpacity
-                        style={styles.card}
+                        style={[styles.card,{width:'auto'}]}
                         onPress={() => {
                             setMode(item.mode);
                             navigation.navigate("login");
@@ -106,7 +107,7 @@ const Welcome = () => {
                         <Image
                             source={item.iconURL}
                             resizeMode="contain"
-                            style={{ width: 160, height: 108 }}
+                            style={{ width: 120, height: 81 }}
                         />
                         <Text style={styles.text("center", SIZES.large)}>
                             {item.title}

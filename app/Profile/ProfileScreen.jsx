@@ -286,7 +286,7 @@ const ProfileScreen = () => {
         <View style={styles.rowContainer}>
           {editMode ? (
             <TouchableOpacity
-              style={styles.button(COLOURS.primary, "80%")}
+              style={styles.button(COLOURS.primary, "70%")}
               onPress={updateDetails}>
               <Text style={styles.text("center", SIZES.large, COLOURS.lightWhite)}>
                 Save the Details
@@ -294,7 +294,7 @@ const ProfileScreen = () => {
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              style={styles.button(COLOURS.primary, "80%")}
+              style={styles.button(COLOURS.primary, "60%")}
               onPress={() => setEditMode(true)}>
               <Text style={styles.text("center", SIZES.large, COLOURS.lightWhite)}>
                 Edit the Details
@@ -304,7 +304,7 @@ const ProfileScreen = () => {
 
           {editMode && (
             <TouchableOpacity
-              style={styles.button(COLOURS.red, "80%")}
+              style={styles.button(COLOURS.red, "60%")}
               onPress={() => setEditMode(false)}>
               <Text style={styles.text("center", SIZES.large, COLOURS.lightWhite)}>
                 Cancel
@@ -312,14 +312,14 @@ const ProfileScreen = () => {
             </TouchableOpacity>
           )}
           <TouchableOpacity
-            style={styles.button(COLOURS.red, "80%")}
+            style={styles.button(COLOURS.red, "60%")}
             onPress={deleteProfile}>
             <Text style={styles.text("center", SIZES.large, COLOURS.lightWhite)}>
               Delete Account
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.button(COLOURS.green, "80%")}
+            style={styles.button(COLOURS.green, "60%")}
             onPress={logOut}>
             <Text style={styles.text("center", SIZES.large, COLOURS.lightWhite)}>
               Log Out

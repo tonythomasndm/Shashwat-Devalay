@@ -407,20 +407,35 @@ const applicationStatus = (volunteersRegistered, volunteersApplications, volunte
             <Text style={[styles.header(SIZES.xxLarge), { textAlign: "left", fontWeight: "bold", lineSpacing: "15%", padding: 0, margin: 0 }]}>
               {item.title}
             </Text>
-            <Text style={[styles.text("left", SIZES.medium, COLOURS.gray), { lineHeight: SIZES.medium * 2, padding: 0, margin: 0, paddingTop: "3%", minWidth: "100%" }]}>
+            <Text style={[styles.text("left", SIZES.medium, COLOURS.gray), { lineHeight: SIZES.medium * 2, padding: 0, margin: 0, paddingTop: "3%", minWidth: "100%"}]}>
               {item.description}
             </Text>
 
-            <Text style={[styles.header(SIZES.large), { textAlign: "left", fontWeight: 600, lineSpacing: "15%", padding: 0, margin: 0, paddingVertical: "5%" }]}>Date</Text>
+            <Text style={[styles.header(SIZES.large), { textAlign: "left", fontWeight: 600, lineSpacing: "15%", padding: 0, margin: 0, paddingVertical: "5%"}]}>Date</Text>
             <Text style={[styles.text("left", SIZES.medium, COLOURS.gray), { lineSpacing: "15%", padding: 0, margin: 0 }]}>
               {dateDisplay(item.startDate, options) + " to " + dateDisplay(item.endDate, options)}
             </Text>
             <Text style={[styles.header(SIZES.large), { textAlign: "left", fontWeight: 600, lineSpacing: "15%", padding: 0, margin: 0, paddingVertical: "5%" }]}>Time Slots</Text>
             {item.timeSlots.map((timeSlot, index) => (
-              <Text key={index} style={[styles.text("left", SIZES.medium, COLOURS.gray), { minWidth: "80%", lineSpacing: "15%", padding: "5%", borderBottomWidth: 2, borderColor: COLOURS.gray2, margin: 0 }]}>
-                {timeDisplay(timeSlot.startTime) + " to " + timeDisplay(timeSlot.endTime)}
-              </Text>
-            ))}
+  <Text
+    key={index}
+    style={[
+      styles.text("left", SIZES.medium, COLOURS.gray),
+      {
+        minWidth: "80%",
+        lineHeight: SIZES.medium * 1.5, // Adjusts line spacing
+        padding: "5%",
+        borderBottomWidth: index !== item.timeSlots.length - 1 ? 2 : 0, // Remove border for the last item
+        borderColor: COLOURS.gray2,
+        margin: 0,
+      }
+    ]}
+  >
+    {timeDisplay(timeSlot.startTime) + " to " + timeDisplay(timeSlot.endTime)}
+  </Text>
+))}
+
+
             <Text style={[styles.header(SIZES.large), { textAlign: "left", fontWeight: 600, lineSpacing: "15%", padding: 0, margin: 0, paddingVertical: "5%" }]}>Venue</Text>
             <Text style={[styles.text("left", SIZES.medium, COLOURS.gray), { lineSpacing: "15%", padding: 0, margin: 0 }]}>{item.venue}</Text>
             {mode !== "Seeker" && (
