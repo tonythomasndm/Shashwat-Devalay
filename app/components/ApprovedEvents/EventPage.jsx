@@ -492,12 +492,11 @@ const applicationStatus = (volunteersRegistered, volunteersApplications, volunte
                     ) 
                   ):(
                     hasSeekerRegistered(seekersRegistered, seekerId) ? (
-                    <View style={styles.button(COLOURS.primary,"80%")}>
-                      <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>You have registered for this event</Text>
-                    </View>)
+                      <Text style={[styles.text("center", SIZES.large, COLOURS.primary),{fontWeight:"bold"}]}>You have registered for this event</Text>
+                    )
                     :(
-                      <View style={styles.button(COLOURS.black,"80%")}>
-                      <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>You have not registered for this event</Text></View>)
+                     
+                      <Text style={[styles.text("center", SIZES.large, COLOURS.red),{fontWeight:"bold"}]}>You have not registered for this event</Text>)
                   ))
             }
             {
