@@ -21,8 +21,7 @@
       },
       "permissions": [
         "android.permission.RECORD_AUDIO"
-      ],
-      "package": "com.arpankumar.SarvSeva"
+      ]
     },
     "plugins": [
       [
@@ -31,13 +30,16 @@
           "photosPermission": "Allow $(PRODUCT_NAME) to access your photo",
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
         }
-        
-      
       ]
     ],
     "web": {
       "favicon": "./assets/SarvSeva.png"
     },
-    "jsEngine": "hermes"
+    "jsEngine": "hermes",
+    "extra": {
+      "eas": {
+        "projectId": "7eb131c3-c3b2-4c1d-9f44-2eae1c17b909"
+      }
+    }
   }
 }
