@@ -30,14 +30,11 @@ const SellerChatInterface = () => {
         const shopDocRef = doc(shopCollectionRef, sellerId);
         let unsubscribe;
         try {
-            unsubscribe = onSnapshot(chatroomDocRef, async (doc) => {
-                const shopDoc = await getDoc(shopDocRef);
+            unsubscribe = onSnapshot(chatroomDocRef, (doc) => {
                 setMessages([]);
                 if (doc.exists()) {
                     const { msgsList } = doc.data();
                     setMessages(msgsList);
-                } else if (shopDoc.exists()) {
-                    setMessages([]);
                 } else {
                     setHasShop(false);
                 }
