@@ -100,7 +100,7 @@ const EventCreateEditAndSuggest = ({ type, eventDetails, setEditMode, useCase, e
     setVolunteerRoles(updatedRoles);
   };
 
-  const UpdateEvent = async (docRef) => {
+  const UpdateEvent = async () => {
   const filteredTimeSlots = timeSlots.filter(
     (slot) => slot.startTime != null && slot.endTime != null
   );
@@ -153,8 +153,8 @@ const EventCreateEditAndSuggest = ({ type, eventDetails, setEditMode, useCase, e
       infraId: infraId,
       volunteersRejected:{},
       volunteersRegistered: {},
-        seekersRegistered:[],
-        ...(mode === "Volunteer" && { type: type } ),
+      seekersRegistered:[],
+        ...((mode === "Admin" || mode==="Volunteer") && { type: type } ),
       volunteersApplications: {}
     });
 
