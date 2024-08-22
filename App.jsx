@@ -22,7 +22,7 @@ const App = () => {
 	const [location, setLocation] = useState(null);
 	const [mode, setMode] = useState("");
 	const [shopExists, setShopExists] = useState(false);
-
+	const [userId, setUserId] =useState("");
 	return (
 		<AppContext.Provider value={{adminId,setAdminId,volunteerId,setVolunteerId,seekerId,setSeekerId, infraId, setInfraId, mode,setMode,location,setLocation, shopExists, setShopExists}}>
 			<NavigationContainer>

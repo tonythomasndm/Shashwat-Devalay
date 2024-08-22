@@ -52,7 +52,7 @@ const SwarojgarHome = () => {
       <TopTab.Screen
         name="Browse Shop"
         component={SwarojgarBrowseShop}
-        initialParams={{ admin: false }}
+        initialParams={{ admin: false, userId }}
         options={{ tabBarLabel: "Browse Shops" }}
       />
       {shopExists ? (

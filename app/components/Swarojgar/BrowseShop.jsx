@@ -13,15 +13,21 @@ import { useNavigation } from '@react-navigation/native';
 import AppContext from '../../../AppContext';
 const SwarojgarBrowseShop = (props) => {
   const { infraId } = useContext(AppContext);
+  
   const [shopsList, setShopsList] = useState([]);
   const [error, setError] = useState("");
   const navigation = useNavigation();
   let admin;
+  let userId;
   if(props.route){
 
-     admin=props.route.params.admin;
+    admin=props.route.params.admin;
+    userId=props.route.params.userId;
   }
-  else admin=false;
+  else {
+    admin=false;
+    userId=null;
+  }
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -36,7 +42,7 @@ const SwarojgarBrowseShop = (props) => {
             ...doc.data(),
           }));
 
-          const filteredShops = shops.filter(shop => shop.infraId === infraId);
+          const filteredShops = shops.filter(shop => shop.infraId === infraId && userId!=null && shop.id != userId);
 
           setShopsList(filteredShops); // Set filtered shops to the list
 

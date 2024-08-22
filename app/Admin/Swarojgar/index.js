@@ -22,7 +22,7 @@ const AdminSwarojgar = () => {
             <TopTab.Screen
                 name="Approved Shops"
                 component={SwarojgarBrowseShop}
-                initialParams={{ admin: true }}
+                initialParams={{ admin: true, userId:null }}
                 options={{ tabBarLabel: "Approved Shops" }}
             />
             
