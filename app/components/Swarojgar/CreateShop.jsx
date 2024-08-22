@@ -286,10 +286,10 @@ const SwarojgarCreateShop = ({ edit, setEdit }) => {
     };
     const validateProduct = (product, index) => {
         // Check each field of the product and return the first encountered error message
-        if (!product.imageUri) return `Product at position ${index + 1} is missing image.`;
-        if (!product.name) return `Product at position ${index + 1} is missing name.`;
-        if (!product.description) return `Product at position ${index + 1} is missing description.`;
-        if (!product.price) return `Product at position ${index + 1} is missing price.`;
+        if (!product.imageUri) return `Product at ${index + 1} is missing image.`;
+        if (!product.name) return `Product at  ${index + 1} is missing name.`;
+        if (!product.description) return `Product at  ${index + 1} is missing description.`;
+        if (!product.price) return `Product at  ${index + 1} is missing price.`;
 
         // If all fields are filled, return an empty string indicating no error
         return '';

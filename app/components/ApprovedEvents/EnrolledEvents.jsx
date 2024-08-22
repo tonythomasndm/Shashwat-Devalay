@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, useMemo } from "react";
 import { Text, SafeAreaView, FlatList } from "react-native";
 import { FIRESTORE_DB } from "../../../FirebaseConfig";
 import { collection, onSnapshot } from "firebase/firestore";
@@ -29,7 +29,7 @@ const EnrolledEvents = ({ type }) => {
         const unsubscribe = onSnapshot(eventsRef, (snapshot) => {
           const events = snapshot.docs.map((doc) => ({
             type: type,
-            ref:doc.ref,
+            ref: doc.ref,
             id: doc.id,
             ...doc.data(),
           }));
@@ -49,49 +49,34 @@ const EnrolledEvents = ({ type }) => {
     };
 
     fetchEvents();
-  }, [type, mode]); // Re-run effect when 'type' prop changes
+  }, [type, mode, infraId, seekerId, volunteerId]); // Include relevant dependencies
 
   // Helper function to filter events based on current date
-  const filterEvents = (events, mode) => {
+  const filterEvents = useMemo(() => (events, mode) => {
     const currentDate = new Date();
     switch (mode) {
       case "Seeker":
-        const seekerEvents = events
-        .filter((event) => event.infraId===infraId)
-        .filter((event) => event.seekersRegistered.includes(seekerId))
-        .filter((event) => new Date(event.endDate.seconds * 1000) > currentDate) // Remove past events
-        .sort((a, b) => new Date(b.startDate.seconds * 1000) - new Date(a.startDate.seconds * 1000)); // Sort by startDate descending
-      return seekerEvents;
+        return events
+          .filter((event) => event.infraId === infraId)
+          .filter((event) => event.seekersRegistered.includes(seekerId))
+          .filter((event) => new Date(event.endDate.seconds * 1000) > currentDate) // Remove past events
+          .sort((a, b) => new Date(b.startDate.seconds * 1000) - new Date(a.startDate.seconds * 1000)); // Sort by startDate descending
 
       case "Volunteer":
-        const volunteerEvents = events
-        .filter((event) => {
-          
-          const keyExists = volunteerId in event.volunteersRegistered;
-
-          if (keyExists) {
-            console.log(`Volunteer ID: ${volunteerId} exists.`);
-          } else {
-            console.log(`Volunteer ID: ${volunteerId} does not exist.`);
-          }
-          return keyExists
-        }
-           
-        ) // Check if volunteerId is in volunteersRegistered
-         .filter((event) => new Date(event.endDate.seconds * 1000) >= currentDate) // Remove past events
-         .filter((event) => event.infraId===infraId)
-        .sort((a, b) => new Date(a.endDate.seconds * 1000) - new Date(b.endDate.seconds * 1000)); // Sort by endDate ascending
-        console.log("volunteerEvents:"+volunteerEvents);
-        return volunteerEvents;
+        return events
+          .filter((event) => volunteerId in event.volunteersRegistered)
+          .filter((event) => new Date(event.endDate.seconds * 1000) >= currentDate) // Remove past events
+          .filter((event) => event.infraId === infraId)
+          .sort((a, b) => new Date(a.endDate.seconds * 1000) - new Date(b.endDate.seconds * 1000)); // Sort by endDate ascending
 
       default:
         return events;
     }
-  };
+  }, [infraId, seekerId, volunteerId, mode]);
 
-  const handlePress = (event) =>{
-    navigation.navigate('event-page', {eventRef:event.ref, type:type ,useCase:"display"})
-  }
+  const handlePress = (event) => {
+    navigation.navigate('event-page', { eventRef: event.ref, type: type, useCase: "display" });
+  };
 
   return (
     <SafeAreaView>
@@ -101,7 +86,7 @@ const EnrolledEvents = ({ type }) => {
         <FlatList
           data={eventsList}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <EventCard item={item} handlePress={handlePress} /> }
+          renderItem={({ item }) => <EventCard item={item} handlePress={handlePress} />}
         />
       )}
     </SafeAreaView>

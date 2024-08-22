@@ -42,7 +42,8 @@ const SwarojgarBrowseShop = (props) => {
             ...doc.data(),
           }));
 
-          const filteredShops = shops.filter(shop => shop.infraId === infraId && userId!=null && shop.id != userId);
+          const filteredShops = shops.filter(shop => (shop.infraId === infraId && userId===null) || 
+                                              (shop.infraId === infraId && userId!==null && shop.id != userId));
 
           setShopsList(filteredShops); // Set filtered shops to the list
 
