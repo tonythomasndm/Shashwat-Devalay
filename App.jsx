@@ -14,6 +14,8 @@ import { ShopHomepage,ProductPage } from './app/components/Swarojgar';
 
 const Stack = createNativeStackNavigator();
 
+const shashwatDevalayInHindi = '\u0936\u093E\u0936\u094D\u0935\u0924 \u0926\u0947\u0935\u093E\u0932\u092F';
+
 const App = () => {
 	const [adminId, setAdminId] = useState("");
 	const [volunteerId, setVolunteerId] = useState("");
@@ -32,7 +34,7 @@ const App = () => {
 						//How to add padding to heading???
 						},
 						headerShadowVisible:false,
-						headerTitle:"SarvSeva"}}>
+						headerTitle:shashwatDevalayInHindi}}>
 						<Stack.Screen name ="welcome" component={Welcome} />
 						<Stack.Screen name="login" component={Login}/>
 						<Stack.Screen name="signup" component={Signup}/>

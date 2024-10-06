@@ -10,6 +10,9 @@ import { FIRESTORE_DB } from "../../FirebaseConfig";
 
 //Create a function for ShopExists - Tony ///////////////
 
+const welcomeToShashwatDevalay = '\u0936\u093E\u0936\u094D\u0935\u0924 \u0926\u0947\u0935\u093E\u0932\u092F \u092E\u0947\u0902 \u0906\u092A\u0915\u093E \u0938\u094D\u0935\u093E\u0917\u0924 \u0939\u0948';
+const selectYourRoleInHindi = '\u0905\u092A\u0928\u0940 \u092D\u0942\u092E\u093F\u0915\u093E \u091A\u0941\u0928\u0947\u0902';
+
 const Welcome = () => {
     const { mode, setMode, location, setLocation, infraId, setInfraId, setShopExists } = useContext(AppContext);
     const navigation = useNavigation();
@@ -88,10 +91,10 @@ const Welcome = () => {
                 ListHeaderComponent={
                     <View>
                         <Text style={styles.header(SIZES.xLarge)}>
-                            Welcome to SarvSeva
+                            {welcomeToShashwatDevalay}
                         </Text>
                         <Text style={styles.header(SIZES.xLarge)}>
-                            Select your role
+                            {selectYourRoleInHindi}
                         </Text>
                     </View>
                 }

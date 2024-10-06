@@ -8,6 +8,17 @@ import { doc, collection, setDoc, addDoc, getDoc } from "firebase/firestore";
 import AppContext from "./../../AppContext";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
+const nameInHindi = '\u0928\u093E\u092E';
+const dateOfBirthInHindi = '\u091C\u0928\u094D\u092E \u0924\u093F\u0925\u093F';
+const genderInHindi = '\u0932\u093F\u0902\u0917';
+const phoneInHindi = '\u092B\u093C\u094B\u0928';
+const addressInHindi = '\u092A\u0924\u093E';
+const pincodeInHindi = '\u092A\u093F\u0928\u0915\u094B\u0921';
+const passwordInHindi = '\u092A\u093E\u0938\u0935\u0930\u094D\u0921';
+const maleInHindi = '\u092A\u0941\u0930\u0941\u0937';
+const femaleInHindi = '\u092E\u0939\u093F\u0932\u093E';
+const othersInHindi = '\u0905\u0928\u094D\u092F';
+
 const Signup = () => {
   const { setAdminId, setVolunteerId, setSeekerId, mode, setInfraId, location } = useContext(AppContext);
   const [name, setName] = useState("");
@@ -91,9 +102,9 @@ const Signup = () => {
   
 
   const genderOptions = [
-    { label: 'Male', value: 'Male', width: "24.5%" },
-    { label: 'Female', value: 'Female', width: "30.5%" },
-    { label: 'Other', value: 'Other', width: "26%" }
+    { label: maleInHindi, value: 'Male', width: "24.5%" },
+    { label: femaleInHindi, value: 'Female', width: "30.5%" },
+    { label: othersInHindi, value: 'Other', width: "26%" }
   ];
 
   const renderGenderOption = ({ item }) => (
@@ -115,13 +126,17 @@ const Signup = () => {
 
         {currentStep === 1 ? (
           <ScrollView contentContainerStyle={{display:"flex",justifyContent:"center", alignItems:"center", minWidth:"80%"}}>
-            <Text style={styles.text("left", SIZES.large, COLOURS.primary)}>Name</Text>
+            <Text style={styles.text("left", SIZES.large, COLOURS.primary)}>
+              {nameInHindi}
+              </Text>
             <TextInput
               value={name}
               onChangeText={(text) => setName(text)}
               style={styles.textboxes}
             />
-            <Text style={styles.text("left", SIZES.large, COLOURS.primary)}>Date of Birth</Text>
+            <Text style={styles.text("left", SIZES.large, COLOURS.primary)}>
+              {dateOfBirthInHindi}
+              </Text>
             <TouchableOpacity
               onPress={() => setDatePickerVisibility(true)}
               style={styles.textboxes}>
@@ -135,7 +150,9 @@ const Signup = () => {
               onConfirm={handleConfirm}
               onCancel={() => setDatePickerVisibility(false)}
             />
-            <Text style={styles.text("left", SIZES.large, COLOURS.primary)}>Gender</Text>
+            <Text style={styles.text("left", SIZES.large, COLOURS.primary)}>
+              {genderInHindi}
+              </Text>
             <FlatList
               data={genderOptions}
               renderItem={renderGenderOption}
@@ -143,7 +160,9 @@ const Signup = () => {
               horizontal={true}
               contentContainerStyle={{ width:"100%", justifyContent: 'space-around', marginVertical: 10 }}
             />
-            <Text style={styles.text("left", SIZES.large, COLOURS.primary)}>Phone Number</Text>
+            <Text style={styles.text("left", SIZES.large, COLOURS.primary)}>
+              {phoneInHindi}
+              </Text>
             <TextInput
               value={phoneNumber}
               onChangeText={(text) => setPhoneNumber(text)}
@@ -174,20 +193,26 @@ const Signup = () => {
               onChangeText={(text) => setInfrastructureName(text)}
               style={styles.textboxes}
             /></View>}
-            <Text style={styles.text("left", SIZES.large, COLOURS.primary)}>Address</Text>
+            <Text style={styles.text("left", SIZES.large, COLOURS.primary)}>
+              {addressInHindi}
+              </Text>
             <TextInput
               value={address}
               onChangeText={(text) => setAddress(text)}
               style={styles.textboxes}
             />
-            <Text style={styles.text("left", SIZES.large, COLOURS.primary)}>Pincode</Text>
+            <Text style={styles.text("left", SIZES.large, COLOURS.primary)}>
+              {pincodeInHindi}
+            </Text>
             <TextInput
               value={pincode}
               onChangeText={(text) => setPincode(text)}
               keyboardType="number-pad"
               style={styles.textboxes}
             />
-            <Text style={styles.text("left", SIZES.large, COLOURS.primary)}>Password</Text>
+            <Text style={styles.text("left", SIZES.large, COLOURS.primary)}>
+              {passwordInHindi}
+            </Text>
             <TextInput
               value={password}
               onChangeText={(text) => setPassword(text)}
