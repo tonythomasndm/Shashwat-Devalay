@@ -1,7 +1,7 @@
 {
-  "expo": {
-    "name": "SarvSeva",
-    "slug": "SarvSeva",
+  "expo": {    
+    "name": "Shashwat-Devalay",
+    "slug": "Shashwat-Devalay",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/SarvSeva.png",
@@ -18,11 +18,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/SarvSeva.png",
         "backgroundColor": "#ffffff"
-      },
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ],
-      "package": "com.dankduckdaksh.SarvSeva"
+      }
     },
     "plugins": [
       [
@@ -36,11 +32,6 @@
     "web": {
       "favicon": "./assets/SarvSeva.png"
     },
-    "jsEngine": "hermes",
-    "extra": {
-      "eas": {
-        "projectId": "7eb131c3-c3b2-4c1d-9f44-2eae1c17b909"
-      }
-    }
+    "jsEngine": "hermes"
   }
 }
