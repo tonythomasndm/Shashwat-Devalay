@@ -25,6 +25,7 @@
     "react": "18.2.0",
     "react-native": "0.74.5",
     "react-native-calendars": "^1.1305.0",
+    "react-native-check-box": "^2.1.7",
     "react-native-image-slider-box": "^2.0.7",
     "react-native-modal-datetime-picker": "18.0.0",
     "react-native-pager-view": "6.3.0",

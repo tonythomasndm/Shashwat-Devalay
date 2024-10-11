@@ -8,13 +8,11 @@ import * as Location from "expo-location";
 import { collection, onSnapshot } from "firebase/firestore";
 import { FIRESTORE_DB } from "../../FirebaseConfig";
 
-//Create a function for ShopExists - Tony ///////////////
-
 const welcomeToShashwatDevalay = '\u0936\u093E\u0936\u094D\u0935\u0924 \u0926\u0947\u0935\u093E\u0932\u092F \u092E\u0947\u0902 \u0906\u092A\u0915\u093E \u0938\u094D\u0935\u093E\u0917\u0924 \u0939\u0948';
 const selectYourRoleInHindi = '\u0905\u092A\u0928\u0940 \u092D\u0942\u092E\u093F\u0915\u093E \u091A\u0941\u0928\u0947\u0902';
 
 const Welcome = () => {
-    const { mode, setMode, location, setLocation, infraId, setInfraId, setShopExists } = useContext(AppContext);
+    const { mode, setMode, location, setLocation, setInfraId} = useContext(AppContext);
     const navigation = useNavigation();
 
     function calculateDistance(loc1Latitude, loc1Longitude, loc2Latitude, loc2Longitude) {
@@ -28,8 +26,6 @@ const Welcome = () => {
     const getInfraId = async () => {
         try {
             const infrastructureDocsRef = collection(FIRESTORE_DB, "Infrastructure");
-
-            // Subscribe to real-time updates using onSnapshot
             const unsubscribe = onSnapshot(infrastructureDocsRef, (snapshot) => {
                 const infrastructureDocs = snapshot.docs.map((doc) => ({
                     ref: doc.ref,
@@ -50,7 +46,6 @@ const Welcome = () => {
             });
 
             return () => {
-                // Unsubscribe from real-time updates when component unmounts
                 unsubscribe();
             };
         } catch (error) {

@@ -102,7 +102,7 @@ const Login = () => {
     <ScrollView>
       <SafeAreaView style={styles.container}>
         <Text style={styles.header(SIZES.xLarge)}>Login into your account</Text>
-        <Text style={styles.text("left",SIZES.large, COLOURS.primary)}>Phone number</Text>
+        <Text style={styles.text("left",SIZES.large, COLOURS.primary)}>Mobile</Text>
         <TextInput
           value={phoneNumber}
           onChangeText={(text) => setPhoneNumber(text)}
@@ -119,6 +119,9 @@ const Login = () => {
           underlineColorAndroid="transparent" // Still didnt work - Add this line to remove the yellow color
           style={styles.textboxes}
         />
+        {error && (
+              <Text style={styles.error_text(SIZES.medium)}>{error}</Text>
+            )}
         <TouchableOpacity
           style={styles.button(COLOURS.primary, "80%")}
           onPress={handleLogin}
@@ -136,6 +139,7 @@ const Login = () => {
             Create a new account
           </Text>
         </TouchableOpacity>
+        
       </SafeAreaView>
     </ScrollView>
   );

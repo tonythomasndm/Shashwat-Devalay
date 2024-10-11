@@ -2,8 +2,8 @@
 import { StyleSheet } from "react-native";
 
 const COLOURS = {
-  primary: "#17A1FA",
-  secondary: "orange",
+  primary: "#F48F19",
+  secondary: "#052FF8",
   tertiary: "#FF7754",
   red: "red",
   green:"green",

@@ -24,18 +24,17 @@ const App = () => {
 	const [location, setLocation] = useState(null);
 	const [mode, setMode] = useState("");
 	const [shopExists, setShopExists] = useState(false);
-	const [userId, setUserId] =useState("");
 	return (
 		<AppContext.Provider value={{adminId,setAdminId,volunteerId,setVolunteerId,seekerId,setSeekerId, infraId, setInfraId, mode,setMode,location,setLocation, shopExists, setShopExists}}>
 			<NavigationContainer>
 				<Stack.Navigator initialRouteName='welcome'>
 					<Stack.Group screenOptions={{
-						headerStyle:{ backgroundColor: COLOURS.lightWhite,
-						//How to add padding to heading???
+						headerStyle:{ backgroundColor: COLOURS.lightWhite
 						},
 						headerShadowVisible:false,
+						headerRight: ()=>(<ScreenHeaderProfileIcon/>),
 						headerTitle:shashwatDevalayInHindi}}>
-						<Stack.Screen name ="welcome" component={Welcome} />
+						<Stack.Screen name="welcome" component={Welcome} />
 						<Stack.Screen name="login" component={Login}/>
 						<Stack.Screen name="signup" component={Signup}/>
 						<Stack.Screen name="profile" component={ProfileScreen}/>
@@ -47,12 +46,14 @@ const App = () => {
 						<Stack.Screen name="ProductPage" component={ProductPage}/>
 					</Stack.Group>
 					<Stack.Group screenOptions={{
-						headerStyle:{ backgroundColor: COLOURS.lightWhite,
-						//How to add padding to heading???
+						headerStyle:{ backgroundColor: COLOURS.lightWhite
+						},
+						headerTitleStyle: {
+							fontWeight: 'bold',
 						},
 						headerShadowVisible:false,
 						headerRight: ()=>(<ScreenHeaderProfileIcon/>),
-						headerTitle:"SarvSeva"}}>
+						headerTitle:shashwatDevalayInHindi}}>
 						
 						<Stack.Screen name="home" component={Home}/>
 						<Stack.Screen name="event-page" component={EventPage}/>

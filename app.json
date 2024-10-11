@@ -4,7 +4,7 @@
     "slug": "Shashwat-Devalay",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/SarvSeva.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -16,7 +16,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/SarvSeva.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       }
     },
@@ -30,7 +30,7 @@
       ]
     ],
     "web": {
-      "favicon": "./assets/SarvSeva.png"
+      "favicon": "./assets/icon.png"
     },
     "jsEngine": "hermes"
   }
