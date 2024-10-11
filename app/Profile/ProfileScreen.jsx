@@ -13,29 +13,20 @@ import { collection, doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
 import { FIRESTORE_DB } from "../../FirebaseConfig";
 import { SIZES, styles, COLOURS } from "../styles";
 import AppContext from "./../../AppContext";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useNavigation } from "@react-navigation/native";
 
 const ProfileScreen = () => {
   const { mode, adminId, infraId, volunteerId, seekerId, location, setInfraId, setVolunteerId, setAdminId, setSeekerId } = useContext(AppContext);
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [password, setPassword] = useState("");
-  const [address, setAddress] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState(null);
-  const [gender, setGender] = useState("");
+  const [city, setCity] = useState("");
+  const [password, setPassword] = useState(""); // State for password
   const [error, setError] = useState("");
   const [editMode, setEditMode] = useState(false);
   const [data, setData] = useState();
   const [infrastructureName, setInfrastructureName] = useState("");
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const options = { day: "numeric", month: "short", year: "numeric" };
 
   const navigation = useNavigation();
-  const handleConfirm = (date) => {
-    setDateOfBirth(date);
-    setDatePickerVisibility(false);
-  };
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -82,11 +73,9 @@ const ProfileScreen = () => {
   useEffect(() => {
     if (data) {
       setName(data.name || "");
-      setAddress(data.address || "");
+      setCity(data.city || "");
       setPhoneNumber(data.phoneNumber || "");
-      setPassword(data.password || "");
-      setDateOfBirth(data.dateOfBirth.toDate() || null);
-      setGender(data.gender || "");
+      setPassword(data.password || ""); // Set password from fetched data
       setEditMode(false);
       setError("");
     }
@@ -109,12 +98,10 @@ const ProfileScreen = () => {
         await setDoc(docRef, {
           name,
           phoneNumber,
-          address,
-          dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
+          city,
+          password, // Save password in Firestore
           latitude: location?.coords?.latitude,
           longitude: location?.coords?.longitude,
-          password,
-          gender,
         });
 
         setEditMode(false);
@@ -127,12 +114,6 @@ const ProfileScreen = () => {
       setError(`ID is missing, cannot update ${mode} details`);
     }
   };
-
-  const genderOptions = [
-    { label: 'Male', value: 'Male', width: "24.5%" },
-    { label: 'Female', value: 'Female', width: "30.5%" },
-    { label: 'Other', value: 'Other', width: "26%" }
-  ];
 
   const deleteProfile = async () => {
     let id = "";
@@ -162,14 +143,13 @@ const ProfileScreen = () => {
   const logOut = async () => {
     try {
       await AsyncStorage.removeItem("phoneNumber");
-      await AsyncStorage.removeItem("password");
       await AsyncStorage.removeItem("mode");
-  
+
       setAdminId("");
       setVolunteerId(null);
       setSeekerId("");
       setInfraId("");
-  
+
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -187,7 +167,6 @@ const ProfileScreen = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.rowContainer}>
           <Text style={[styles.header(SIZES.large), {fontWeight:'600'}]}>Mode: {mode}</Text>
-          {mode === "Admin" && <Text style={[styles.text("center", SIZES.medium, COLOURS.primary), {minWidth:"100%"}]}>In admin mode, editing your profile updates your location for which infrastructure might change accordingly</Text>}
         </View>
 
         <View style={styles.rowContainer}>
@@ -204,58 +183,15 @@ const ProfileScreen = () => {
         </View>
 
         <View style={styles.rowContainer}>
-          <Text style={styles.text("left", SIZES.medium, COLOURS.primary)}>Date of Birth:</Text>
-          {editMode ? (
-            <TouchableOpacity
-              onPress={() => setDatePickerVisibility(true)}
-              style={[styles.textboxes, { flex: 1, marginLeft: 10 }]}>
-              <Text style={styles.text("left", SIZES.medium, COLOURS.black)}>
-                {dateOfBirth ? dateOfBirth.toLocaleDateString("en-GB", options) : "None"}
-              </Text>
-            </TouchableOpacity>
-          ) : (
-            <Text style={[styles.profileBlank, { flex: 1, marginLeft: 10 }]}>
-              {dateOfBirth ? dateOfBirth.toLocaleDateString("en-GB", options) : "Null"}
-            </Text>
-          )}
-          <DateTimePickerModal
-            isVisible={isDatePickerVisible}
-            mode='date'
-            onConfirm={handleConfirm}
-            onCancel={() => setDatePickerVisibility(false)}
-          />
-        </View>
-
-        <View style={styles.rowContainer}>
-          <Text style={styles.text("left", SIZES.medium, COLOURS.primary)}>Gender:</Text>
-          {editMode ? (
-            <View style={{ flexDirection: 'row', flex: 1, marginLeft: 10 }}>
-              {genderOptions.map((option) => (
-                <TouchableOpacity
-                  key={option.value}
-                  style={styles.smallButton(gender === option.value ? COLOURS.primary : COLOURS.white, option.width)}
-                  onPress={() => setGender(option.value)}>
-                  <Text style={styles.text("center", SIZES.medium, gender === option.value ? COLOURS.lightWhite : COLOURS.black)}>
-                    {option.label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          ) : (
-            <Text style={[styles.profileBlank, { flex: 1, marginLeft: 10 }]}>{gender}</Text>
-          )}
-        </View>
-
-        <View style={styles.rowContainer}>
-          <Text style={styles.text("left", SIZES.medium, COLOURS.primary)}>Address:</Text>
+          <Text style={styles.text("left", SIZES.medium, COLOURS.primary)}>City:</Text>
           {editMode ? (
             <TextInput
-              value={address}
-              onChangeText={(text) => setAddress(text)}
+              value={city}
+              onChangeText={(text) => setCity(text)}
               style={[styles.textboxes, { flex: 1, marginLeft: 10 }]}
             />
           ) : (
-            <Text style={[styles.profileBlank, { flex: 1, marginLeft: 10 }]}>{address}</Text>
+            <Text style={[styles.profileBlank, { flex: 1, marginLeft: 10 }]}>{city}</Text>
           )}
         </View>
 
@@ -264,17 +200,18 @@ const ProfileScreen = () => {
           <Text style={[styles.profileBlank, { flex: 1, marginLeft: 10 }]}>{phoneNumber}</Text>
         </View>
         {editMode && (<Text style={styles.error_text(SIZES.medium)}>Phone Number cannot be changed</Text>)}
+
         <View style={styles.rowContainer}>
           <Text style={styles.text("left", SIZES.medium, COLOURS.primary)}>Password:</Text>
           {editMode ? (
             <TextInput
               value={password}
               onChangeText={(text) => setPassword(text)}
+              secureTextEntry={true} // To hide the password
               style={[styles.textboxes, { flex: 1, marginLeft: 10 }]}
-              secureTextEntry
             />
           ) : (
-            <Text style={[styles.profileBlank, { flex: 1, marginLeft: 10 }]}>{password}</Text>
+            <Text style={[styles.profileBlank, { flex: 1, marginLeft: 10 }]}>******</Text> // Hide password when not in edit mode
           )}
         </View>
 
@@ -305,13 +242,15 @@ const ProfileScreen = () => {
           {editMode && (
             <TouchableOpacity
               style={styles.button(COLOURS.red, "60%")}
-              onPress={() => setEditMode(false)}>
+              onPress={() => deleteProfile()}>
               <Text style={styles.text("center", SIZES.large, COLOURS.lightWhite)}>
-                Cancel
+                Delete Profile
               </Text>
             </TouchableOpacity>
           )}
-          <TouchableOpacity
+        </View>
+
+        <TouchableOpacity
             style={styles.button(COLOURS.red, "60%")}
             onPress={deleteProfile}>
             <Text style={styles.text("center", SIZES.large, COLOURS.lightWhite)}>
@@ -326,7 +265,6 @@ const ProfileScreen = () => {
             </Text>
           </TouchableOpacity>
           <Text style={styles.error_text(SIZES.medium)}>{error}</Text>
-        </View>
       </SafeAreaView>
     </ScrollView>
   );

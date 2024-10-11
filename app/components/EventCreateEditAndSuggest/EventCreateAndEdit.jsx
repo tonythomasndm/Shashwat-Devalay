@@ -13,7 +13,7 @@ import { useContext, useState } from "react";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FIRESTORE_DB } from "../../../FirebaseConfig";
-import { addDoc, collection, doc, setDoc, Timestamp } from "firebase/firestore";
+import { collection, doc, setDoc, Timestamp } from "firebase/firestore";
 
 function convertTimeStringToTimestamp(timeString) {
 
@@ -55,7 +55,7 @@ function convertTimestampToTimeString(timestamp) {
 }
 
 
-const EventCreateEditAndSuggest = ({ type, eventDetails, setEditMode, useCase, eventRef }) => {
+const EventCreateAndEdit = ({ type, eventDetails, setEditMode, useCase, eventRef }) => {
   const { mode, infraId } = useContext(AppContext);
   const [title, setTitle] = useState(eventDetails.title || "");
   const [description, setDescription] = useState(eventDetails.description || "");
@@ -555,7 +555,7 @@ const EventCreateEditAndSuggest = ({ type, eventDetails, setEditMode, useCase, e
   );
 };
 
-export default EventCreateEditAndSuggest;
+export default EventCreateAndEdit;
 const TimeSlotSelector = ({ index, timeType, handleTimeSlots, initialValue }) => {
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
   const [selectedTime, setSelectedTime] = useState(initialValue || null);

@@ -8,3 +8,37 @@ export const Roles=[
     {title:"\u0938\u094D\u0935\u092F\u0902\u0938\u0947\u0935\u0915", iconURL:volunteer_icon, mode:"Volunteer"},
     {title:"\u092A\u094D\u0930\u0936\u093E\u0938\u0915", iconURL:admin_icon, mode:"Admin"}
 ]
+
+export const Services={
+    "Seva": [
+        "Helper",
+        "Supporter",
+        "Teach",
+        "Doctor",
+        "Yoga Teacher",
+        "Resource Generation",
+        "Government Scheme Knowledge",
+        "Finance and Investment",
+        "Legal"
+      ],
+      "Shiksha": [
+        "Teaching",
+        "Supportive Education",
+        "Dance",
+        "Music"
+      ],
+      "Sanskar": [
+        "Bhajan Gayak",
+        "Kirtankar",
+        "Intellectual Lectures",
+        "Musician",
+        "Musical Instrument",
+        "GyaniJaan",
+        "Kathavachak",
+        "Motivator"
+      ],
+      "Swarojgar": [
+        "Skill Developer",
+        "Local Products"
+      ]
+}

@@ -32,12 +32,18 @@ const App = () => {
 						headerStyle:{ backgroundColor: COLOURS.lightWhite
 						},
 						headerShadowVisible:false,
-						headerRight: ()=>(<ScreenHeaderProfileIcon/>),
 						headerTitle:shashwatDevalayInHindi}}>
 						<Stack.Screen name="welcome" component={Welcome} />
 						<Stack.Screen name="login" component={Login}/>
 						<Stack.Screen name="signup" component={Signup}/>
 						<Stack.Screen name="profile" component={ProfileScreen}/>
+						</Stack.Group>
+						<Stack.Group screenOptions={{
+						headerStyle:{ backgroundColor: COLOURS.lightWhite
+						},
+						headerShadowVisible:false,
+						headerRight: ()=>(<ScreenHeaderProfileIcon/>),
+						headerTitle:shashwatDevalayInHindi}}>
 						<Stack.Screen name="admin-chatinterface" component={AdminChatInterface}/>
 						<Stack.Screen name="admin-swarojgar-chatinterface" component={AdminSwarojgarChatInterface}/>
 						<Stack.Screen name="seeker-chatinterface" component={SeekerChatInterface}/>

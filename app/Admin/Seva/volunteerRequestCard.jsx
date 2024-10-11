@@ -4,7 +4,6 @@ import accept from '../../../assets/accept.png';
 import reject from '../../../assets/reject.png';
 import { FIRESTORE_DB } from '../../../FirebaseConfig';
 import { deleteField, runTransaction, doc, updateDoc, getDoc } from 'firebase/firestore';
-import AppContext from '../../../AppContext';
 
 export const VolunteerRequestCard = ({ eventId, name, role, phoneNo, type }) => {
   return (

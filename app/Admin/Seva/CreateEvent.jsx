@@ -1,7 +1,7 @@
-import { EventCreateEditAndSuggest } from "../../components/EventCreateEditAndSuggest";
+import { EventCreateAndEdit } from "../../components/EventCreateEditAndSuggest";
 const AdminSevaCreateEvent = () =>{
     return(
-       <EventCreateEditAndSuggest type="Seva" eventDetails=""/>
+       <EventCreateAndEdit type="Seva" eventDetails=""/>
     )
 }
 

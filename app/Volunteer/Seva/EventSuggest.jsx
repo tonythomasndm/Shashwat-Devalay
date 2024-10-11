@@ -1,7 +1,7 @@
-import EventCreateAndSuggest from "../../components/EventCreateEditAndSuggest/EventCreateEditAndSuggest";
+import { EventSuggest } from "../../components/EventCreateEditAndSuggest";
 const VolunteerSevaEventSuggest = () =>{
     return(
-       <EventCreateAndSuggest type="Seva" eventDetails=""/>
+       <EventSuggest type="Seva"/>
     )
 }
 

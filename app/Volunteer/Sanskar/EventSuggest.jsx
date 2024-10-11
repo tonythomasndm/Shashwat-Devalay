@@ -1,7 +1,7 @@
-import EventCreateAndSuggest from "../../components/EventCreateEditAndSuggest/EventCreateEditAndSuggest";
+import { EventSuggest } from "../../components/EventCreateEditAndSuggest";
 const VolunteerSanskarEventSuggest = () =>{
     return(
-       <EventCreateAndSuggest type="Sanskar" eventDetails=""/>
+       <EventSuggest type="Sanskar"/>
     )
 }
 

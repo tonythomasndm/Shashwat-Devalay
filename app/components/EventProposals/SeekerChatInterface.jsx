@@ -5,6 +5,7 @@ import send_icon from "../../../assets/send_icon.png"
 import { collection, doc, getDoc, Timestamp, onSnapshot, updateDoc, arrayUnion, setDoc } from "firebase/firestore";
 import { FIRESTORE_DB } from "../../../FirebaseConfig";
 import AppContext from "../../../AppContext";
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const SeekerChatInterface = ({ type }) => {
     const { seekerId, infraId } = useContext(AppContext);
@@ -139,10 +140,21 @@ const Footer = ({ message, setMessage, seekerId, infraId, type }) => {
                 multiline
             />
             <TouchableOpacity
-                onPress={() => addMessageToDatabase(message, setMessage, seekerId, infraId, type)}>
-                <Image
-                    source={send_icon}
-                />
+                style={
+                    {
+                        backgroundColor: COLOURS.primary, // Use your primary color as the background
+                        
+                        borderRadius: 10,
+                        alignItems: 'center', // Center the icon horizontally
+                        justifyContent: 'center', // Center the icon vertically
+                        width: "15%", // Set a fixed width
+                        height: 50, // Set a fixed height 
+
+                    }
+            }
+                onPress={() => addMessageToDatabase(message, setMessage, seekerId, infraId, type)}
+                >
+                <Ionicons name="send" size={30} color={COLOURS.lightWhite} />
             </TouchableOpacity>
         </View>
     );
