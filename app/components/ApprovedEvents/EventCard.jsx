@@ -60,6 +60,9 @@ const EventCard = ({ item, handlePress }) => {
     <Text style={{ fontSize: SIZES.large, fontWeight: 600 }}>
       {item.title}
     </Text>
+    <Text style={[styles.error_text(SIZES.medium), { color: "red" }]}>
+        {item.areaOfInterest}
+      </Text>
     <View
       style={{
         display: "flex",
@@ -70,6 +73,7 @@ const EventCard = ({ item, handlePress }) => {
       <EvilIcons name='location' size={30} height={30} color='black' />
       <Text style={styles.text_component(SIZES.medium)}>{item.venue}</Text>
     </View>
+
     {areRegistrationsClosed(item.registrationDeadline) ? (
       <Text style={[styles.error_text(SIZES.medium), { color: "red" }]}>
         Registrations Closed

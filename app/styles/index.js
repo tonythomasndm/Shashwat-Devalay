@@ -27,7 +27,7 @@ const SIZES = {
 
 export { COLOURS, SIZES };
 
-const borderRadius=30;
+const borderRadius=10;
 export const styles = StyleSheet.create({
   container: {
     display: "flex",
@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
   textboxes: {
     borderWidth: 2,
     borderColor: COLOURS.primary,
-    borderRadius: borderRadius,
+    borderRadius: 30,
     paddingHorizontal: SIZES.large,
     paddingVertical: SIZES.medium,
     fontSize: SIZES.medium,
@@ -91,6 +91,22 @@ export const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: borderRadius,
   }),
+    pickerIOS: {
+      height: "10%",
+      flex: 1,
+      alignSelf: "center",
+      width: "80%",
+      fontSize: "20%",
+      color: COLOURS.black
+    },
+    pickerAndroid: {
+      height: "10%",
+      flex: 1,
+      alignSelf: "center",
+      width: "80%",
+      fontSize: "20%",
+      color: COLOURS.black
+    },
   smallButton: (color, width) => ({
     display: "flex",
     justifyContent: "center",

@@ -11,15 +11,12 @@ export const Roles=[
 
 export const Services={
     "Seva": [
-        "Helper",
-        "Supporter",
-        "Teach",
-        "Doctor",
-        "Yoga Teacher",
+        "Medical",
+        "Yoga",
         "Resource Generation",
-        "Government Scheme Knowledge",
+        "Government Schemes",
         "Finance and Investment",
-        "Legal"
+        "Legal Aid"
       ],
       "Shiksha": [
         "Teaching",
@@ -28,17 +25,15 @@ export const Services={
         "Music"
       ],
       "Sanskar": [
-        "Bhajan Gayak",
-        "Kirtankar",
+        "Bhakti",
+        "Kirtan",
+        "Bhajan",
         "Intellectual Lectures",
-        "Musician",
-        "Musical Instrument",
-        "GyaniJaan",
-        "Kathavachak",
-        "Motivator"
+        "Motivation",
+        "Music"
       ],
       "Swarojgar": [
-        "Skill Developer",
+        "Skill Development",
         "Local Products"
       ]
 }

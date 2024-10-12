@@ -55,8 +55,8 @@ import {
   
         setTitle("");
         setAreaOfInterest("");
-        setStartDate(new Date());
-        setEndDate(new Date());
+        setStartDate(null);
+        setEndDate(null);
         setError("");
         Alert.alert("Success", "Event suggestion submitted successfully!");
       } catch (e) {
@@ -123,7 +123,7 @@ import {
         </Text>
         <TouchableOpacity
           onPress={showStartDatePicker}
-          style={[styles.dateTextboxes, { flex: 1, maxWidth: "60%" }]}
+          style={[styles.dateTextboxes, { flex: 1, maxWidth: "50%" }]}
           >
           <Text style={styles.text("left",SIZES.medium,COLOURS.black)}>
             {startDate ? startDate.toLocaleDateString("en-GB", options) : ""}
@@ -140,10 +140,10 @@ import {
   
           {/* Date Picker for End Date */}
           <View style={[styles.rowContainer,{ padding:10 }]}>
-        <Text style={styles.text("left",SIZES.large,COLOURS.black)}>End Date</Text>
+        <Text style={styles.text("left",SIZES.large,COLOURS.black)}>End Date  </Text>
         <TouchableOpacity
           onPress={showEndDatePicker}
-          style={[styles.dateTextboxes, { flex: 1, maxWidth: "60%" }]}
+          style={[styles.dateTextboxes, { flex: 1, maxWidth: "50%" }]}
           >
           <Text style={styles.text("left",SIZES.medium,COLOURS.black)}>
             {endDate ? endDate.toLocaleDateString("en-GB", options) : ""}
@@ -193,4 +193,3 @@ import {
       color: COLOURS.black
     },
   };
-  

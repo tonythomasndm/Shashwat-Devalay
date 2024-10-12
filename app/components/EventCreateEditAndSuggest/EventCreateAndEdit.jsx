@@ -54,7 +54,6 @@ function convertTimestampToTimeString(timestamp) {
   return timeString;
 }
 
-
 const EventCreateAndEdit = ({ type, eventDetails, setEditMode, useCase, eventRef }) => {
   const { mode, infraId } = useContext(AppContext);
   const [title, setTitle] = useState(eventDetails.title || "");

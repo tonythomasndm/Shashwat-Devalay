@@ -3,7 +3,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { Text, SafeAreaView, FlatList } from "react-native";
 import { FIRESTORE_DB } from "../../../FirebaseConfig";
 import { collection, onSnapshot } from "firebase/firestore";
-import EventCard from "./../ApprovedEvents/EventCard";
+import EventSuggestionCard from "./EventSuggestionCard";
 import AppContext from "../../../AppContext";
 
 const VolunteerSuggestions = ({ route }) => {
@@ -69,7 +69,7 @@ const VolunteerSuggestions = ({ route }) => {
         <FlatList
           data={eventSuggestions}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <EventCard item={item} handlePress={handlePress} />}
+          renderItem={({ item }) => <EventSuggestionCard item={item} handlePress={handlePress} />}
         />
       )}
     </SafeAreaView>

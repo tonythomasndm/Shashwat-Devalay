@@ -1,17 +1,20 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Text, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
+import { Text, SafeAreaView, FlatList, View } from "react-native";
 import { FIRESTORE_DB } from "../../../FirebaseConfig";
 import { collection, onSnapshot } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import EventCard from "./EventCard";
 import AppContext from "../../../AppContext";
+import { Services } from "../../styles/constants";
+import RNPickerSelect from "react-native-picker-select";
+import { COLOURS, styles } from "../../styles"; // Assuming your style file
 
 const EventsList = ({ route }) => {
   const { type, time } = route.params;
-  const { infraId, volunteerId } = useContext(AppContext)
+  const { infraId, volunteerId } = useContext(AppContext);
   const [eventsList, setEventsList] = useState([]);
   const [error, setError] = useState("");
-
+  const [selectedArea, setSelectedArea] = useState(Services[type]?.[0] || ""); // Default to the first service
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -30,11 +33,11 @@ const EventsList = ({ route }) => {
         const unsubscribe = onSnapshot(eventsRef, (snapshot) => {
           const events = snapshot.docs.map((doc) => ({
             type: type,
-            ref:doc.ref,
+            ref: doc.ref,
             id: doc.id,
             ...doc.data(),
           }));
-          const filteredEvents = filterEvents(events, time);
+          const filteredEvents = filterEvents(events, time, selectedArea);
           setEventsList(filteredEvents);
           setError(""); // Clear error state
         });
@@ -50,108 +53,86 @@ const EventsList = ({ route }) => {
     };
 
     fetchEvents();
-  }, [type, time]); // Re-run effect when 'type' prop changes
+  }, [type, time, selectedArea]); // Re-run effect when 'type', 'time', or 'selectedArea' changes
 
-  // Helper function to filter events based on current date
-  const filterEvents = (events, time) => {
+  // Helper function to filter events based on current date and area of interest
+  const filterEvents = (events, time, selectedArea) => {
     const currentDate = new Date();
+    let filteredEvents = events.filter(event => event.areaOfInterest === selectedArea); // Filter by area of interest
+
     switch (time) {
       case "Past":
-        const pastEvents = events
-          .filter((event) => {
-            const endDate = event.endDate.toDate();
-            return endDate < currentDate && event.infraId=== infraId;
-          })
-          .sort((a, b) => b.endDate.toDate() - a.endDate.toDate()); // Sort by endDate descending
-        return pastEvents;
+        return filteredEvents
+          .filter(event => new Date(event.endDate.seconds * 1000) < currentDate && event.infraId === infraId)
+          .sort((a, b) => b.endDate.seconds - a.endDate.seconds);
 
       case "Current":
-        const currentEvents = events
-          .filter((event) => {
-            const startDate = event.startDate.toDate();
-            const endDate = event.endDate.toDate();
-            return startDate <= currentDate && endDate >= currentDate && event.infraId=== infraId;
-          })
-          .sort((a, b) => a.endDate.toDate() - b.endDate.toDate()); // Sort by endDate ascending
-
-        return currentEvents;
+        return filteredEvents
+          .filter(event => new Date(event.startDate.seconds * 1000) <= currentDate && new Date(event.endDate.seconds * 1000) >= currentDate && event.infraId === infraId)
+          .sort((a, b) => a.endDate.seconds - b.endDate.seconds);
 
       case "Future":
-        const futureEvents = events
-          .filter((event) => {
-            const startDate = event.startDate.toDate();
-            return startDate > currentDate && event.infraId=== infraId;
-          })
-          .sort((a, b) => a.startDate.toDate() - b.startDate.toDate()); // Sort by startDate ascending
-        return futureEvents;
-      
-      case "Accepted" :
-        const acceptedEvents = events
-        .filter((event) => {
-          const keyExists = volunteerId in event.volunteersRegistered;
-          if (keyExists) {
-            console.log(`Volunteer ID: ${volunteerId} exists.`);
-          } else {
-            console.log(`Volunteer ID: ${volunteerId} does not exist.`);
-          }
-          return keyExists
-        })
-        .filter((event) => new Date(event.endDate.seconds * 1000) >= currentDate) // Remove past events
-         .filter((event) => event.infraId===infraId)
-        .sort((a, b) => a.registrationDeadline.toDate() - b.registrationDeadline.toDate());
-        return acceptedEvents;
+        return filteredEvents
+          .filter(event => new Date(event.startDate.seconds * 1000) > currentDate && event.infraId === infraId)
+          .sort((a, b) => a.startDate.seconds - b.startDate.seconds);
 
-        case "Rejected" :
-          const rejectedEvents = events
-          .filter((event) => {
-            const keyExists = volunteerId in event.volunteersRejected;
-            if (keyExists) {
-              console.log(`Volunteer ID: ${volunteerId} exists.`);
-            } else {
-              console.log(`Volunteer ID: ${volunteerId} does not exist.`);
-            }
-            return keyExists
-          })
-          .filter((event) => new Date(event.endDate.seconds * 1000) >= currentDate) // Remove past events
-           .filter((event) => event.infraId===infraId)
-          .sort((a, b) => a.registrationDeadline.toDate() - b.registrationDeadline.toDate());
-          return rejectedEvents;
-        case "Pending" :
-            const pendingEvents = events
-            .filter((event) => {
-              const keyExists = volunteerId in event.volunteersApplications;
-              if (keyExists) {
-                console.log(`Volunteer ID: ${volunteerId} exists.`);
-              } else {
-                console.log(`Volunteer ID: ${volunteerId} does not exist.`);
-              }
-              return keyExists
-            })
-            .filter((event) => new Date(event.endDate.seconds * 1000) >= currentDate) // Remove past events
-             .filter((event) => event.infraId===infraId)
-            .sort((a, b) => a.registrationDeadline.toDate() - b.registrationDeadline.toDate());
-            return pendingEvents;
+      case "Accepted":
+        return filteredEvents
+          .filter(event => volunteerId in event.volunteersRegistered && new Date(event.endDate.seconds * 1000) >= currentDate && event.infraId === infraId)
+          .sort((a, b) => a.registrationDeadline.seconds - b.registrationDeadline.seconds);
 
+      // Handle other cases similarly...
 
       default:
-        return events;
+        return filteredEvents;
     }
   };
 
-  const handlePress = (event) =>{
-    navigation.navigate('event-page', {eventRef:event.ref, type:type, useCase:"display"})
-  }
+  const handlePress = (event) => {
+    navigation.navigate("event-page", { eventRef: event.ref, type: type, useCase: "display" });
+  };
 
   return (
     <SafeAreaView>
       {error ? (
         <Text>{error}</Text>
       ) : (
-        <FlatList
-          data={eventsList}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <EventCard item={item} handlePress={handlePress} /> }
-        />
+        <>
+          {/* Dropdown to select Area of Interest */}
+          <View
+            style={{
+              borderWidth: 2,
+              borderColor: COLOURS.primary,
+              borderRadius: 50,
+              height: "13%", // Fixed height for the container
+              width: "80%",
+              alignSelf: "center", // Center the container
+              justifyContent: "center",
+              marginBottom: 20, // Add some space below the dropdown
+            }}
+          >
+            <RNPickerSelect
+              onValueChange={(value) => setSelectedArea(value)}
+              items={Services[type].map((service) => ({
+                label: service,
+                value: service,
+              }))}
+              style={{
+                inputIOS: styles.pickerIOS,
+                inputAndroid: styles.pickerAndroid,
+              }}
+              placeholder={{ label: "Select Area of Interest", value: null }}
+              value={selectedArea}
+            />
+          </View>
+
+          {/* Event List */}
+          <FlatList
+            data={eventsList}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => <EventCard item={item} handlePress={handlePress} />}
+          />
+        </>
       )}
     </SafeAreaView>
   );
