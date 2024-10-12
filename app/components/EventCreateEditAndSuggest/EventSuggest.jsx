@@ -20,11 +20,17 @@ import {
     const { infraId, volunteerId } = useContext(AppContext);
     const [title, setTitle] = useState("");
     const [areaOfInterest, setAreaOfInterest] = useState("");
-    const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(new Date());
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
     const [error, setError] = useState("");
     const [isStartDatePickerVisible, setStartDatePickerVisible] = useState(false);
     const [isEndDatePickerVisible, setEndDatePickerVisible] = useState(false);
+
+    const options = {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    };
 
     const serviceOptions = Services[type] || [];
   
@@ -111,31 +117,45 @@ import {
           </View>
   
           {/* Date Picker for Start Date */}
-          <TouchableOpacity onPress={showStartDatePicker}>
-            <View style={[styles.fillBlank(SIZES.large), { margin: SIZES.xLarge }]}>
-              <Text>{`Start Date: ${startDate.toLocaleDateString()}`}</Text>
-            </View>
-          </TouchableOpacity>
+          <View style={[styles.rowContainer,{ padding:10 }]}>
+        <Text style={styles.text("left",SIZES.large,COLOURS.black)}>
+          Start Date
+        </Text>
+        <TouchableOpacity
+          onPress={showStartDatePicker}
+          style={[styles.dateTextboxes, { flex: 1, maxWidth: "60%" }]}
+          >
+          <Text style={styles.text("left",SIZES.medium,COLOURS.black)}>
+            {startDate ? startDate.toLocaleDateString("en-GB", options) : ""}
+          </Text>
+        </TouchableOpacity>
+        </View>
           <DateTimePickerModal
             isVisible={isStartDatePickerVisible}
             mode="date"
             onConfirm={handleConfirmStartDate}
             onCancel={hideStartDatePicker}
-            date={startDate}
+            date={new Date()}
           />
   
           {/* Date Picker for End Date */}
-          <TouchableOpacity onPress={showEndDatePicker}>
-            <View style={[styles.fillBlank(SIZES.large), { margin: SIZES.xLarge }]}>
-              <Text>{`End Date: ${endDate.toLocaleDateString()}`}</Text>
-            </View>
-          </TouchableOpacity>
+          <View style={[styles.rowContainer,{ padding:10 }]}>
+        <Text style={styles.text("left",SIZES.large,COLOURS.black)}>End Date</Text>
+        <TouchableOpacity
+          onPress={showEndDatePicker}
+          style={[styles.dateTextboxes, { flex: 1, maxWidth: "60%" }]}
+          >
+          <Text style={styles.text("left",SIZES.medium,COLOURS.black)}>
+            {endDate ? endDate.toLocaleDateString("en-GB", options) : ""}
+          </Text>
+        </TouchableOpacity>
+        </View>
           <DateTimePickerModal
             isVisible={isEndDatePickerVisible}
             mode="date"
             onConfirm={handleConfirmEndDate}
             onCancel={hideEndDatePicker}
-            date={endDate}
+            date={new Date()}
           />
   
           {error && <Text style={styles.error_text(SIZES.medium)}>{error}</Text>}
