@@ -37,6 +37,8 @@ const EventsList = ({ route }) => {
             id: doc.id,
             ...doc.data(),
           }));
+
+          // Now apply filtering based on both time and selected area of interest
           const filteredEvents = filterEvents(events, time, selectedArea);
           setEventsList(filteredEvents);
           setError(""); // Clear error state
@@ -58,7 +60,8 @@ const EventsList = ({ route }) => {
   // Helper function to filter events based on current date and area of interest
   const filterEvents = (events, time, selectedArea) => {
     const currentDate = new Date();
-    let filteredEvents = events.filter(event => event.areaOfInterest === selectedArea); // Filter by area of interest
+    // Filter by area of interest
+    let filteredEvents = events.filter(event => event.areaOfInterest === selectedArea);
 
     switch (time) {
       case "Past":
@@ -68,7 +71,11 @@ const EventsList = ({ route }) => {
 
       case "Current":
         return filteredEvents
-          .filter(event => new Date(event.startDate.seconds * 1000) <= currentDate && new Date(event.endDate.seconds * 1000) >= currentDate && event.infraId === infraId)
+          .filter(event => 
+            new Date(event.startDate.seconds * 1000) <= currentDate && 
+            new Date(event.endDate.seconds * 1000) >= currentDate && 
+            event.infraId === infraId
+          )
           .sort((a, b) => a.endDate.seconds - b.endDate.seconds);
 
       case "Future":
@@ -78,10 +85,30 @@ const EventsList = ({ route }) => {
 
       case "Accepted":
         return filteredEvents
-          .filter(event => volunteerId in event.volunteersRegistered && new Date(event.endDate.seconds * 1000) >= currentDate && event.infraId === infraId)
+          .filter(event => 
+            volunteerId in event.volunteersRegistered && 
+            new Date(event.endDate.seconds * 1000) >= currentDate && 
+            event.infraId === infraId
+          )
           .sort((a, b) => a.registrationDeadline.seconds - b.registrationDeadline.seconds);
 
-      // Handle other cases similarly...
+      case "Rejected":
+        return filteredEvents
+          .filter(event => 
+            volunteerId in event.volunteersRejected && 
+            new Date(event.endDate.seconds * 1000) >= currentDate && 
+            event.infraId === infraId
+          )
+          .sort((a, b) => a.registrationDeadline.seconds - b.registrationDeadline.seconds);
+
+      case "Pending":
+        return filteredEvents
+          .filter(event => 
+            volunteerId in event.volunteersApplications && 
+            new Date(event.endDate.seconds * 1000) >= currentDate && 
+            event.infraId === infraId
+          )
+          .sort((a, b) => a.registrationDeadline.seconds - b.registrationDeadline.seconds);
 
       default:
         return filteredEvents;
@@ -93,7 +120,7 @@ const EventsList = ({ route }) => {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={[styles.container, { maxWidth: "100%", alignSelf: "center" }]}>
       {error ? (
         <Text>{error}</Text>
       ) : (
@@ -103,12 +130,13 @@ const EventsList = ({ route }) => {
             style={{
               borderWidth: 2,
               borderColor: COLOURS.primary,
-              borderRadius: 50,
-              height: "13%", // Fixed height for the container
-              width: "80%",
+              borderRadius: 20,
+              height: "30%", // Fixed height for the dropdown
+              width: "80%", // Width of the container
               alignSelf: "center", // Center the container
-              justifyContent: "center",
+              justifyContent: "center", // Center content vertically
               marginBottom: 20, // Add some space below the dropdown
+              overflow: "hidden" // To prevent any overflow if needed
             }}
           >
             <RNPickerSelect
@@ -118,13 +146,26 @@ const EventsList = ({ route }) => {
                 value: service,
               }))}
               style={{
-                inputIOS: styles.pickerIOS,
-                inputAndroid: styles.pickerAndroid,
+                inputIOS: {
+                  color: COLOURS.primary, // Use appropriate color
+                  paddingVertical: 12,
+                  paddingHorizontal: 10,
+                  borderRadius: 5,
+                  // Add additional styles as necessary
+                },
+                inputAndroid: {
+                  color: COLOURS.primary, // Use appropriate color
+                  paddingVertical: 8,
+                  paddingHorizontal: 10,
+                  borderRadius: 5,
+                  // Add additional styles as necessary
+                },
               }}
               placeholder={{ label: "Select Area of Interest", value: null }}
               value={selectedArea}
             />
           </View>
+
 
           {/* Event List */}
           <FlatList
