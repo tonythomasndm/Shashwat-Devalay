@@ -90,6 +90,7 @@ import {
             value={title}
             onChangeText={(text) => setTitle(text)}
           />
+          
           <View
             style={{
               borderWidth: 2,

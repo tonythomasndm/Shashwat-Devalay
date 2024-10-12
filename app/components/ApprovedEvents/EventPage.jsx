@@ -24,7 +24,7 @@ import { Picker } from "@react-native-picker/picker";
 const EventPage = ({ route }) => {
   const { mode, seekerId, volunteerId } = useContext(AppContext);
   const [editMode, setEditMode] = useState(false);
-  const { eventRef, type, useCase } = route.params;
+  const { eventRef, type, useCase, onApprove } = route.params;
   const [timeLeft, setTimeLeft] = useState("");
   const [seekersRegistered, setSeekersRegistered] = useState([]);
   const [seekerEstimate, setSeekerEstimate] = useState(0);
@@ -39,6 +39,48 @@ const EventPage = ({ route }) => {
   const [selectVolunteerRoleMode, setSelectVolunteerRoleMode] = useState(false);
   const [selectedVolunteerRole, setSelectedVolunteerRole] = useState(null); // State for selected role
   const navigation = useNavigation();
+
+  if (useCase === "suggestion") {
+    return (
+      <View>
+        <EventCreateAndEdit
+          type={type}
+          useCase={useCase} 
+          eventRef={eventRef}
+        />
+      </View>
+    );
+  }
+
+  const calculateTimeLeft = (registrationDeadline) => {
+    const now = new Date();
+    const deadline = new Date(registrationDeadline.seconds * 1000);
+    const diff = deadline - now;
+
+    if (diff <= 0) {
+      setTimeLeft("Registration deadline has passed");
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+    let timeLeftStr = "";
+    if (days > 0) {
+      timeLeftStr += `${days} day${days > 1 ? "s" : ""} `;
+    }
+    if (hours > 0) {
+      timeLeftStr += `${hours} hr${hours > 1 ? "s" : ""} `;
+    }
+    if (minutes > 0) {
+      timeLeftStr += `${minutes} minute${minutes > 1 ? "s" : ""} `;
+    }
+
+    timeLeftStr += "left";
+    setTimeLeft(timeLeftStr);
+  };
+
 
   useEffect(() => {
     const fetchEventDetails = async () => {
@@ -73,17 +115,6 @@ const EventPage = ({ route }) => {
     return () => unsubscribe();
   }, [eventRef]);
 
-  if (useCase === "suggestion") {
-    return (
-      <View>
-        <EventCreateAndEdit
-          type={type}
-          useCase={useCase} 
-          eventRef={eventRef}
-        />
-      </View>
-    );
-  }
   const options = {
     day: "numeric",
     month: "short",
@@ -116,36 +147,6 @@ const EventPage = ({ route }) => {
     const dateObj = new Date(millis);
     return dateObj.toLocaleDateString("en-GB", options);
   };
-
-  const calculateTimeLeft = (registrationDeadline) => {
-    const now = new Date();
-    const deadline = new Date(registrationDeadline.seconds * 1000);
-    const diff = deadline - now;
-
-    if (diff <= 0) {
-      setTimeLeft("Registration deadline has passed");
-      return;
-    }
-
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-    let timeLeftStr = "";
-    if (days > 0) {
-      timeLeftStr += `${days} day${days > 1 ? "s" : ""} `;
-    }
-    if (hours > 0) {
-      timeLeftStr += `${hours} hr${hours > 1 ? "s" : ""} `;
-    }
-    if (minutes > 0) {
-      timeLeftStr += `${minutes} minute${minutes > 1 ? "s" : ""} `;
-    }
-
-    timeLeftStr += "left";
-    setTimeLeft(timeLeftStr);
-  };
-
   useEffect(() => {
     if (item) {
       const interval = setInterval(
@@ -371,6 +372,9 @@ return (
         <Text style={[styles.header(SIZES.large), styles.boldText]}>Venue</Text>
         <Text style={[styles.text(SIZES.medium, COLOURS.gray)]}>{item.venue}</Text>
 
+        {/* Area Of Interest */}
+        <Text style={[styles.header(SIZES.large), styles.boldText]}>Area of Interest</Text>
+        <Text style={[styles.text(SIZES.medium, COLOURS.gray)]}>{item.areaOfInterest}</Text>
         {/* Volunteer Section for Admin */}
         {mode !== "Seeker" && (
           <View>

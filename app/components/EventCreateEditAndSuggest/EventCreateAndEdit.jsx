@@ -9,11 +9,13 @@ import {
 } from "react-native";
 import { SIZES, COLOURS, styles } from "../../styles";
 import AppContext from "../../../AppContext";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FIRESTORE_DB } from "../../../FirebaseConfig";
-import { collection, doc, setDoc, Timestamp } from "firebase/firestore";
+import { collection, doc, setDoc, Timestamp, getDoc } from "firebase/firestore";
+import { Services } from "../../styles/constants";
+import RNPickerSelect from "react-native-picker-select";
 
 function convertTimeStringToTimestamp(timeString) {
 
@@ -32,6 +34,7 @@ function convertTimeStringToTimestamp(timeString) {
 
   return timestamp;
 }
+
 function convertTimestampToTimeString(timestamp) {
   // Get the Date object from the Firestore Timestamp
   const date = timestamp.toDate();
@@ -54,30 +57,54 @@ function convertTimestampToTimeString(timestamp) {
   return timeString;
 }
 
-const EventCreateAndEdit = ({ type, eventDetails, setEditMode, useCase, eventRef }) => {
+const EventCreateAndEdit = ({ type, useCase, eventRef, setEditMode }) => {
   const { mode, infraId } = useContext(AppContext);
-  const [title, setTitle] = useState(eventDetails.title || "");
-  const [description, setDescription] = useState(eventDetails.description || "");
-  const [venue, setVenue] = useState(eventDetails.venue || "");
-  const [startDate, setStartDate] = useState(eventDetails.startDate ? eventDetails.startDate.toDate() : null);
-  const [endDate, setEndDate] = useState(eventDetails.endDate ? eventDetails.endDate.toDate() : null);
-  const [registrationDeadline, setRegistrationDeadline] = useState(eventDetails.registrationDeadline ? eventDetails.registrationDeadline.toDate() : null);
-  const [seekerEstimate, setSeekerEstimate] = useState(eventDetails.seekerEstimate || 0);
-  const [volunteerRoles, setVolunteerRoles] = useState(eventDetails?.volunteerRoles ? Object.entries(eventDetails.volunteerRoles).map(([role, count]) => ({ role, count })) : [{ role: "", count: 0 }]);
-  
-  const [timeSlots, setTimeSlots] = useState(eventDetails.timeSlots ? eventDetails.timeSlots.map(slot => ({
-    startTime:convertTimestampToTimeString(slot.startTime),
-    endTime: convertTimestampToTimeString(slot.endTime),
-  })) : [{ startTime: null, endTime: null }]);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [venue, setVenue] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [registrationDeadline, setRegistrationDeadline] = useState(null);
+  const [seekerEstimate, setSeekerEstimate] = useState(0);
+  const [volunteerRoles, setVolunteerRoles] = useState([{ role: "", count: 0 }]);
+  const [areaOfInterest, setAreaOfInterest] = useState("");
+  const [timeSlots, setTimeSlots] = useState([{ startTime: null, endTime: null }]);
   const [error, setError] = useState("");
   const [isChecked, setIsChecked] = useState(false);
   const [isStartDatePickerVisible, setStartDatePickerVisibility] = useState(false);
   const [isEndDatePickerVisible, setEndDatePickerVisibility] = useState(false);
-  const [
-    isRegistrationDeadlineDatePickerVisible,
-    setRegistrationDeadlineDatePickerVisibility,
-  ] = useState(false);
+  const [isRegistrationDeadlineDatePickerVisible, setRegistrationDeadlineDatePickerVisibility] = useState(false);
 
+  // Fetch event details if eventRef is provided
+  useEffect(() => {
+    const fetchEventDetails = async () => {
+      if (eventRef) {
+        try {
+          const eventDoc = await getDoc(eventRef);
+          if (eventDoc.exists()) {
+            const eventDetails = eventDoc.data();
+            setTitle(eventDetails.title || "");
+            setDescription(eventDetails.description || "");
+            setVenue(eventDetails.venue || "");
+            setStartDate(eventDetails.startDate ? eventDetails.startDate.toDate() : null);
+            setEndDate(eventDetails.endDate ? eventDetails.endDate.toDate() : null);
+            setRegistrationDeadline(eventDetails.registrationDeadline ? eventDetails.registrationDeadline.toDate() : null);
+            setSeekerEstimate(eventDetails.seekerEstimate || 0);
+            setAreaOfInterest(eventDetails.areaOfInterest || "");
+            setVolunteerRoles(eventDetails.volunteerRoles ? Object.entries(eventDetails.volunteerRoles).map(([role, count]) => ({ role, count })) : [{ role: "", count: 0 }]);
+            setTimeSlots(eventDetails.timeSlots ? eventDetails.timeSlots.map(slot => ({
+              startTime: convertTimestampToTimeString(slot.startTime),
+              endTime: convertTimestampToTimeString(slot.endTime),
+            })) : [{ startTime: null, endTime: null }]);
+          }
+        } catch (e) {
+          setError("Error fetching event details");
+        }
+      }
+    };
+
+    fetchEventDetails();
+  }, [eventRef]);
 
   const options = {
     day: "numeric",
@@ -117,6 +144,7 @@ const EventCreateAndEdit = ({ type, eventDetails, setEditMode, useCase, eventRef
     startDate === null ||
     endDate === null ||
     registrationDeadline === null ||
+    areaOfInterest.length === 0||
     volunteerRoles.length === 0 ||
     timeSlots.length === 0 ||
     timeSlots.some((slot) => slot.startTime === null || slot.endTime === null)
@@ -150,6 +178,7 @@ const EventCreateAndEdit = ({ type, eventDetails, setEditMode, useCase, eventRef
       registrationDeadline: registrationDeadline,
       timeSlots: timeSlotsTimestamps,
       infraId: infraId,
+      areaOfInterest: areaOfInterest,
       volunteersRejected:{},
       volunteersRegistered: {},
       seekersRegistered:[],
@@ -211,6 +240,7 @@ const EventCreateAndEdit = ({ type, eventDetails, setEditMode, useCase, eventRef
     setSeekerEstimate(0);
     setStartDate(null);
     setEndDate(null);
+    setAreaOfInterest("");
     setRegistrationDeadline(null);
     setVolunteerRoles([{ role: "", count: "" }]);
     setTimeSlots([]);
@@ -239,6 +269,7 @@ const EventCreateAndEdit = ({ type, eventDetails, setEditMode, useCase, eventRef
       description.length === 0 ||
       startDate === null ||
       endDate === null ||
+      areaOfInterest.length === 0 ||
       registrationDeadline === null ||
       volunteerRoles.length === 0 ||
       timeSlots.length === 0 || timeSlots.some((slot) => slot.startTime === null || slot.endTime === null) ) {
@@ -253,13 +284,11 @@ const EventCreateAndEdit = ({ type, eventDetails, setEditMode, useCase, eventRef
     }
     const eventsCollectionRef = collection(
       FIRESTORE_DB,
-      mode === "Admin"
-        ? type === "Seva"
+      type === "Seva"
           ? "SevaEvents"
           : type === "Shiksha"
           ? "ShikshaEvents"
           : "SanskarEvents"
-        : "EventSuggestions"
     );
 
     const eventDocRef = doc(eventsCollectionRef);
@@ -281,6 +310,7 @@ const EventCreateAndEdit = ({ type, eventDetails, setEditMode, useCase, eventRef
         ),
         startDate: startDate,
         endDate: endDate,
+        areaOfInterest:areaOfInterest,
         registrationDeadline: registrationDeadline,
         timeSlots: timeSlotsTimestamps,
         infraId: infraId,
@@ -297,41 +327,83 @@ const EventCreateAndEdit = ({ type, eventDetails, setEditMode, useCase, eventRef
       setError(e.message || "An error occurred while saving the event");
     }
   };
+
+
+
+
   return (
     <ScrollView>
-      <SafeAreaView style={[styles.container,{maxWidth:"80%", alignSelf:"center"}]}>
+      <SafeAreaView style={[styles.container,{maxWidth:"100%", alignSelf:"center"}]}>
         <Text style={styles.header(SIZES.xLarge)}>
           Fill in the event details
         </Text>
-
         <TextInput
           style={[styles.fillBlank(SIZES.large),{margin:SIZES.xLarge}]}
           placeholder='Event Title'
           value={title}
           onChangeText={(text) => setTitle(text)}
         />
-
         <TextInput
-          style={styles.textboxes} // { textAlignVertical: 'top', textAlign: 'left' }
+          style={styles.textboxes}
           placeholder='Event Description'
           value={description}
           multiline={true}
           numberOfLines={3}
           onChangeText={(text) => setDescription(text)}
         />
-
+       
+        <Text style={[styles.text("center",SIZES.large,COLOURS.black),{marginTop:"5%"}]}>
+            Select Area Of Interest
+          </Text>
+         <View
+            style={{
+              borderWidth: 2,
+              borderColor: COLOURS.primary,
+              borderRadius: 30,
+              minWidth:"80%",
+              marginBottom:"5%"
+            }}
+          >
+            <RNPickerSelect
+              onValueChange={(value) => setAreaOfInterest(value)}
+              items={Services[type].map((service) => ({
+                label: service,
+                value: service,
+              }))}
+              style={{
+                inputIOS: {
+                  color: COLOURS.primary, // Use appropriate color
+                  paddingVertical: 12,
+                  paddingHorizontal: 10,
+                  borderRadius: 5,
+                  // Add additional styles as necessary
+                },
+                inputAndroid: {
+                  color: COLOURS.primary, // Use appropriate color
+                  paddingVertical: 8,
+                  paddingHorizontal: 10,
+                  borderRadius: 5,
+                  // Add additional styles as necessary
+                },
+              }}
+              placeholder={{ label: "Select Area of Interest", value: null }}
+              value={areaOfInterest}
+            />
+          </View> 
+          
         <TextInput
           style={[styles.fillBlank(SIZES.medium),{margin:SIZES.xLarge}]}
           placeholder='Venue'
           value={venue}
           onChangeText={(text) => setVenue(text)}
         />
+
         <View style={styles.rowContainer}>
           <Text style={styles.text("left",SIZES.large,COLOURS.black)}>
             Seeker Estimate
           </Text>
           <TextInput
-            style={[styles.textboxes, { flex: 1, minWidth:"auto" }]}
+            style={[styles.textboxes, { flex: 1, maxWidth:"30%" }]}
             placeholder=''
             keyboardType='numeric'
             value={
@@ -354,7 +426,7 @@ const EventCreateAndEdit = ({ type, eventDetails, setEditMode, useCase, eventRef
         </Text>
         <TouchableOpacity
           onPress={() => setStartDatePickerVisibility(true)}
-          style={[styles.dateTextboxes, { flex: 1, maxWidth: "70%" }]}
+          style={[styles.dateTextboxes, { flex: 1, maxWidth: "40%" }]}
           >
           <Text style={styles.text("left",SIZES.medium,COLOURS.black)}>
             {startDate ? startDate.toLocaleDateString("en-GB", options) : ""}
@@ -365,14 +437,14 @@ const EventCreateAndEdit = ({ type, eventDetails, setEditMode, useCase, eventRef
         <Text style={styles.text("left",SIZES.large,COLOURS.black)}>End Date</Text>
         <TouchableOpacity
           onPress={() => setEndDatePickerVisibility(true)}
-          style={[styles.dateTextboxes, { flex: 1, maxWidth: "60%" }]}
+          style={[styles.dateTextboxes, { flex: 1, maxWidth: "50%" }]}
           >
           <Text style={styles.text("left",SIZES.medium,COLOURS.black)}>
             {endDate ? endDate.toLocaleDateString("en-GB", options) : ""}
           </Text>
         </TouchableOpacity>
         </View>
-        <Text style={[styles.text("left",SIZES.large,COLOURS.black),{minWidth:"100%"}]}>
+        <Text style={[styles.text("center",SIZES.large,COLOURS.black),{minWidth:"100%"}]}>
           Select Registration Deadline 
         </Text>
         <TouchableOpacity
@@ -521,12 +593,12 @@ const EventCreateAndEdit = ({ type, eventDetails, setEditMode, useCase, eventRef
 
 
         {error && <Text style={styles.error_text(SIZES.medium)}>{error}</Text>}
-        { !eventDetails ?
+        { useCase ?
         <TouchableOpacity
           style={styles.button(COLOURS.primary,"80%")}
           onPress={AddEvent}>
           <Text style={styles.text("center",SIZES.large,COLOURS.white )}>
-            {mode === "Admin" ? "Create Event" : "Event Suggest"}
+            Create Event
           </Text>
         </TouchableOpacity>
         :

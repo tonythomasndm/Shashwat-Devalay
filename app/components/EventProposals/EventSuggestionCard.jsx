@@ -4,8 +4,9 @@ import { COLOURS, SIZES, styles } from "../../styles/index";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import { FIRESTORE_DB } from "../../../FirebaseConfig";
 
-const EventSuggestionCard = ({ item, handlePress }) => {
+const EventSuggestionCard = ({ item }) => {
   const [volunteerName, setVolunteerName] = useState("Loading..."); // Default state
+  const [isApproved, setIsApproved] = useState(false);
   const options = {
     day: "numeric",
     month: "short",
@@ -64,6 +65,25 @@ const EventSuggestionCard = ({ item, handlePress }) => {
     }
   };
 
+  // Approve function to handle the approval logic and then delete the event suggestion
+  const handleApprove = async () => {
+    navigation.navigate('event-page', {
+      eventRef: item.ref,
+      type: item.type, 
+      useCase: "suggestion",
+      onApprove: async () => {
+        try {
+          // Delete the document only after approval
+          await deleteDoc(item.ref);
+          Alert.alert("Event Approved", "Event suggestion has been approved and deleted.");
+        } catch (error) {
+          console.error("Error approving and deleting event suggestion:", error);
+          Alert.alert("Error", "There was an error deleting the event suggestion.");
+        }
+      },
+    });
+  };
+
   return (
     <View
       style={[
@@ -115,7 +135,7 @@ const EventSuggestionCard = ({ item, handlePress }) => {
       <View style={[styles.rowContainer]}>
         <TouchableOpacity
           style={styles.button(COLOURS.green, "40%")}
-          onPress={() => handlePress(item)}
+          onPress={handleApprove} // Approval now triggers handlePress and deletion
         >
           <Text style={styles.text("center", SIZES.large, COLOURS.white)}>Approve</Text>
         </TouchableOpacity>

@@ -57,9 +57,6 @@ const VolunteerSuggestions = ({ route }) => {
     return filteredEventSuggestions;
   };
 
-  const handlePress = (event) => {
-    navigation.navigate('event-page', { eventRef: event.ref, type: type, useCase: "suggestion" });
-  };
 
   return (
     <SafeAreaView>
@@ -69,7 +66,7 @@ const VolunteerSuggestions = ({ route }) => {
         <FlatList
           data={eventSuggestions}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <EventSuggestionCard item={item} handlePress={handlePress} />}
+          renderItem={({ item }) => <EventSuggestionCard item={item} />}
         />
       )}
     </SafeAreaView>
