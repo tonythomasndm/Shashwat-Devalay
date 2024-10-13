@@ -16,24 +16,37 @@ import { FIRESTORE_DB } from "../../../FirebaseConfig";
 import { collection, doc, setDoc, Timestamp, getDoc } from "firebase/firestore";
 import { Services } from "../../styles/constants";
 import RNPickerSelect from "react-native-picker-select";
+import { useNavigation } from "@react-navigation/native";
 
-function convertTimeStringToTimestamp(timeString) {
 
-  const [timePart, period] = timeString.split(" ");
+function convertTimeStringToTimestamp(timeString, baseDate) {
+  let period = timeString.slice(-2).toLowerCase(); // Extract AM/PM
+  let timePart = timeString.slice(0, 5); // Extract the time (e.g., "12:34")
   const [hours, minutes] = timePart.split(":").map(Number);
 
   let adjustedHours = hours;
-  if (period.toLowerCase() === "pm" && adjustedHours !== 12) {
+  if (period === "pm" && adjustedHours !== 12) {
     adjustedHours += 12;
-  } else if (period.toLowerCase() === "am" && adjustedHours === 12) {
+  } else if (period === "am" && adjustedHours === 12) {
     adjustedHours = 0;
   }
 
-  const date = new Date(2024, 0, 1, adjustedHours, minutes);
-  const timestamp = Timestamp.fromDate(date);
+  // Use the base date for the event instead of a fixed date
+  const date = new Date(
+    baseDate.getFullYear(),
+    baseDate.getMonth(),
+    baseDate.getDate(),
+    adjustedHours,
+    minutes
+  );
 
-  return timestamp;
+  if (isNaN(date.getTime())) {
+    throw new Error("Invalid date value");
+  }
+
+  return Timestamp.fromDate(date); // Firestore Timestamp
 }
+
 
 function convertTimestampToTimeString(timestamp) {
   // Get the Date object from the Firestore Timestamp
@@ -57,7 +70,7 @@ function convertTimestampToTimeString(timestamp) {
   return timeString;
 }
 
-const EventCreateAndEdit = ({ type, useCase, eventRef, setEditMode }) => {
+const EventCreateAndEdit = ({ type, useCase, eventRef, setEditMode, onApprove }) => {
   const { mode, infraId } = useContext(AppContext);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -74,8 +87,10 @@ const EventCreateAndEdit = ({ type, useCase, eventRef, setEditMode }) => {
   const [isStartDatePickerVisible, setStartDatePickerVisibility] = useState(false);
   const [isEndDatePickerVisible, setEndDatePickerVisibility] = useState(false);
   const [isRegistrationDeadlineDatePickerVisible, setRegistrationDeadlineDatePickerVisibility] = useState(false);
+  const [loading, setLoading] = useState(true); // Add loading state
 
-  // Fetch event details if eventRef is provided
+  const navigation = useNavigation();
+
   useEffect(() => {
     const fetchEventDetails = async () => {
       if (eventRef) {
@@ -99,12 +114,21 @@ const EventCreateAndEdit = ({ type, useCase, eventRef, setEditMode }) => {
           }
         } catch (e) {
           setError("Error fetching event details");
+        } finally {
+          setLoading(false); // Set loading to false after fetching
         }
+      } else {
+        setLoading(false); // No eventRef, set loading to false
       }
     };
 
     fetchEventDetails();
   }, [eventRef]);
+
+  // Add a loading state check before rendering the main content
+  if (loading) {
+    return <Text>Loading...</Text>; // You can customize this loading indicator
+  }
 
   const options = {
     day: "numeric",
@@ -161,8 +185,8 @@ const EventCreateAndEdit = ({ type, useCase, eventRef, setEditMode }) => {
 
   try {
     const timeSlotsTimestamps = filteredTimeSlots.map((slot) => ({
-      startTime: convertTimeStringToTimestamp(slot.startTime),
-      endTime: convertTimeStringToTimestamp(slot.endTime),
+      startTime: convertTimeStringToTimestamp(slot.startTime, startDate),
+      endTime: convertTimeStringToTimestamp(slot.endTime, startDate),
     }));
 
     await setDoc(eventRef,{
@@ -200,6 +224,10 @@ const EventCreateAndEdit = ({ type, useCase, eventRef, setEditMode }) => {
     updatedTimeSlots[index][timeType] = time;
     setTimeSlots(updatedTimeSlots);
   };
+  const CancelSuggestion = () =>{
+    onApprove();
+    navigation.goBack();
+  }
 
   const removeMoreRolesOrTimeSlots = (isVolunteerRolesOrTimeSlots, indexToRemove) => {
     if (isVolunteerRolesOrTimeSlots === "Volunteer Roles") {
@@ -261,6 +289,7 @@ const EventCreateAndEdit = ({ type, useCase, eventRef, setEditMode }) => {
       (item) => item.role !== "" && item.count !== 0
     );
     setVolunteerRoles(filteredVolunteerRoles);
+    
 
     if (
       title.length === 0 ||
@@ -295,9 +324,15 @@ const EventCreateAndEdit = ({ type, useCase, eventRef, setEditMode }) => {
 
     try {
       const timeSlotsTimestamps = filteredTimeSlots.map((slot) => ({
-        startTime: convertTimeStringToTimestamp(slot.startTime),
-        endTime: convertTimeStringToTimestamp(slot.endTime),
+        startTime: convertTimeStringToTimestamp(slot.startTime, startDate),
+        endTime: convertTimeStringToTimestamp(slot.endTime, startDate),
       }));
+      
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || isNaN(registrationDeadline.getTime())) {
+        setError("Invalid dates. Please ensure all date fields are correct.");
+        return;
+      }
+      
       
 
       await setDoc(eventDocRef, {
@@ -320,9 +355,18 @@ const EventCreateAndEdit = ({ type, useCase, eventRef, setEditMode }) => {
         volunteersApplications: {},
         volunteersRejected: {},
       });
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || isNaN(registrationDeadline.getTime())) {
+  setError("Invalid dates. Please ensure all date fields are correct.");
+  return;
+}
+
 
       resetForm();
       Alert.alert("", "Event added successfully");
+      if(useCase==="suggestion"){
+      onApprove();
+      Alert.alert("Event Approved", "Event suggestion has been approved.");
+      navigation.goBack();}
     } catch (e) {
       setError(e.message || "An error occurred while saving the event");
     }
@@ -372,18 +416,16 @@ const EventCreateAndEdit = ({ type, useCase, eventRef, setEditMode }) => {
               }))}
               style={{
                 inputIOS: {
-                  color: COLOURS.primary, // Use appropriate color
+                  color: COLOURS.primary, 
                   paddingVertical: 12,
                   paddingHorizontal: 10,
                   borderRadius: 5,
-                  // Add additional styles as necessary
                 },
                 inputAndroid: {
-                  color: COLOURS.primary, // Use appropriate color
+                  color: COLOURS.primary,
                   paddingVertical: 8,
                   paddingHorizontal: 10,
                   borderRadius: 5,
-                  // Add additional styles as necessary
                 },
               }}
               placeholder={{ label: "Select Area of Interest", value: null }}
@@ -437,7 +479,7 @@ const EventCreateAndEdit = ({ type, useCase, eventRef, setEditMode }) => {
         <Text style={styles.text("left",SIZES.large,COLOURS.black)}>End Date</Text>
         <TouchableOpacity
           onPress={() => setEndDatePickerVisibility(true)}
-          style={[styles.dateTextboxes, { flex: 1, maxWidth: "50%" }]}
+          style={[styles.dateTextboxes, { flex: 1, maxWidth: "40%" }]}
           >
           <Text style={styles.text("left",SIZES.medium,COLOURS.black)}>
             {endDate ? endDate.toLocaleDateString("en-GB", options) : ""}
@@ -514,7 +556,6 @@ const EventCreateAndEdit = ({ type, useCase, eventRef, setEditMode }) => {
             Add More Roles
           </Text>
         </TouchableOpacity>
-
         <Text style={[styles.text("center",SIZES.large,COLOURS.black),{marginTop:"3%"}]}>
           Fill in the time slots
         </Text>
@@ -593,7 +634,7 @@ const EventCreateAndEdit = ({ type, useCase, eventRef, setEditMode }) => {
 
 
         {error && <Text style={styles.error_text(SIZES.medium)}>{error}</Text>}
-        { useCase ?
+        { useCase !=="display" ? <View>
         <TouchableOpacity
           style={styles.button(COLOURS.primary,"80%")}
           onPress={AddEvent}>
@@ -601,6 +642,15 @@ const EventCreateAndEdit = ({ type, useCase, eventRef, setEditMode }) => {
             Create Event
           </Text>
         </TouchableOpacity>
+
+        {useCase==="suggestion" && <TouchableOpacity
+          style={styles.button(COLOURS.red,"80%")}
+          onPress={CancelSuggestion}>
+          <Text style={styles.text("center",SIZES.large,COLOURS.white )}>
+            Cancel Suggestion
+          </Text>
+        </TouchableOpacity>}
+        </View>
         :
         <View>
         <TouchableOpacity

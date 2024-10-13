@@ -31,6 +31,10 @@ const App = () => {
 					<Stack.Group screenOptions={{
 						headerStyle:{ backgroundColor: COLOURS.lightWhite
 						},
+						headerTitleStyle: {
+							fontWeight: 'black',
+							color:COLOURS.primary
+						},
 						headerShadowVisible:false,
 						headerTitle:shashwatDevalayInHindi}}>
 						<Stack.Screen name="welcome" component={Welcome} />
@@ -55,7 +59,8 @@ const App = () => {
 						headerStyle:{ backgroundColor: COLOURS.lightWhite
 						},
 						headerTitleStyle: {
-							fontWeight: 'bold',
+							fontWeight: 'black',
+							color:COLOURS.primary
 						},
 						headerShadowVisible:false,
 						headerRight: ()=>(<ScreenHeaderProfileIcon/>),

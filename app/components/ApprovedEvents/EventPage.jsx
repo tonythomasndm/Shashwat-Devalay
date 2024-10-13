@@ -39,14 +39,14 @@ const EventPage = ({ route }) => {
   const [selectVolunteerRoleMode, setSelectVolunteerRoleMode] = useState(false);
   const [selectedVolunteerRole, setSelectedVolunteerRole] = useState(null); // State for selected role
   const navigation = useNavigation();
-
-  if (useCase === "suggestion") {
+  if (useCase  && useCase === "suggestion") {
     return (
       <View>
         <EventCreateAndEdit
           type={type}
           useCase={useCase} 
           eventRef={eventRef}
+          onApprove={onApprove}
         />
       </View>
     );
@@ -80,8 +80,6 @@ const EventPage = ({ route }) => {
     timeLeftStr += "left";
     setTimeLeft(timeLeftStr);
   };
-
-
   useEffect(() => {
     const fetchEventDetails = async () => {
       const eventSnapshot = await getDoc(eventRef);
@@ -241,7 +239,7 @@ const hasRegistered = (volunteersRegistered, volunteerId) => {
   const deleteEvent = async () => {
     try {
       // Navigate to home before deleting the document
-      navigation.navigate("home");
+      navigation.goBack();
       // Delay to ensure navigation completes before deletion
       await new Promise((resolve) => setTimeout(resolve, 1000));
       await deleteDoc(eventRef);
@@ -344,159 +342,252 @@ const applicationStatus = (volunteersRegistered, volunteersApplications, volunte
     return "Not applied for any role";
   }
 };
-
 return (
-  <ScrollView>
+  <View>
+      {editMode ? (
+        <EventCreateAndEdit type={type} eventDetails={item} setEditMode={setEditMode} useCase={useCase} eventRef={eventRef}/>
+      ) : (
+        <ScrollView>
     <SafeAreaView style={styles.container}>
-      <View style={{ marginBottom: "20%", paddingHorizontal: SIZES.small }}>
-        
-        {/* Title and Description */}
-        <Text style={[styles.header(SIZES.xxLarge), styles.boldText, styles.leftText]}>{item.title}</Text>
-        <Text style={[styles.text(SIZES.medium, COLOURS.gray), styles.description]}>{item.description}</Text>
-
-        {/* Date and Time */}
-        <Text style={[styles.header(SIZES.large), styles.boldText]}>Date</Text>
-        <Text style={[styles.text(SIZES.medium, COLOURS.gray)]}>
-          {`${dateDisplay(item.startDate, options)} to ${dateDisplay(item.endDate, options)}`}
-        </Text>
-
-        {/* Time Slots */}
-        <Text style={[styles.header(SIZES.large), styles.boldText]}>Time Slots</Text>
-        {item.timeSlots.map((timeSlot, index) => (
-          <Text key={index} style={[styles.text(SIZES.medium, COLOURS.gray), styles.timeSlot]}>
-            {`${timeDisplay(timeSlot.startTime)} to ${timeDisplay(timeSlot.endTime)}`}
+        <View style={{ marginBottom: "20%", paddingHorizontal: SIZES.small }}>
+          <Text style={[styles.header(SIZES.xxLarge), { textAlign: "left", fontWeight: "bold", lineSpacing: "15%", padding: 0, margin: 0 }]}>
+            {item.title}
           </Text>
-        ))}
+          <Text style={[styles.text("left", SIZES.medium, COLOURS.gray), { lineHeight: SIZES.medium * 2, padding: 0, margin: 0, paddingTop: "3%", minWidth: "100%"}]}>
+            {item.description}
+          </Text>
 
-        {/* Venue */}
-        <Text style={[styles.header(SIZES.large), styles.boldText]}>Venue</Text>
-        <Text style={[styles.text(SIZES.medium, COLOURS.gray)]}>{item.venue}</Text>
+          <Text style={[styles.header(SIZES.large), { textAlign: "left", fontWeight: 600, lineSpacing: "15%", padding: 0, margin: 0, paddingVertical: "5%"}]}>Date</Text>
+          <Text style={[styles.text("left", SIZES.medium, COLOURS.gray), { lineSpacing: "15%", padding: 0, margin: 0 }]}>
+            {dateDisplay(item.startDate, options) + " to " + dateDisplay(item.endDate, options)}
+          </Text>
+          <Text style={[styles.header(SIZES.large), { textAlign: "left", fontWeight: 600, lineSpacing: "15%", padding: 0, margin: 0, paddingVertical: "5%" }]}>Time Slots</Text>
+          {item.timeSlots.map((timeSlot, index) => (
+<Text
+  key={index}
+  style={[
+    styles.text("left", SIZES.medium, COLOURS.gray),
+    {
+      minWidth: "80%",
+      lineHeight: SIZES.medium * 1.5, // Adjusts line spacing
+      padding: "5%",
+      borderBottomWidth: index !== item.timeSlots.length - 1 ? 2 : 0, // Remove border for the last item
+      borderColor: COLOURS.gray2,
+      margin: 0,
+    }
+  ]}
+>
+  {timeDisplay(timeSlot.startTime) + " to " + timeDisplay(timeSlot.endTime)}
+</Text>
+))}
 
-        {/* Area Of Interest */}
-        <Text style={[styles.header(SIZES.large), styles.boldText]}>Area of Interest</Text>
-        <Text style={[styles.text(SIZES.medium, COLOURS.gray)]}>{item.areaOfInterest}</Text>
-        {/* Volunteer Section for Admin */}
-        {mode !== "Seeker" && (
-          <View>
-            <Text style={[styles.header(SIZES.large), styles.boldText]}>Volunteer Roles Left</Text>
-            {Object.entries(item.volunteerRoles).map(([role, count], index) => (
-              count > 0 && (
-                <Text key={index} style={[styles.text(SIZES.large, COLOURS.primary), styles.boldText]}>
-                  {`${role} : ${count}`}
-                </Text>
-              )
-            ))}
-          </View>
-        )}
 
-        {/* Registration Deadline */}
-        <Text style={[styles.header(SIZES.large), styles.boldText]}>Registration Deadline</Text>
-        <Text style={[styles.text(SIZES.medium, COLOURS.gray), styles.boldText]}>{dateDisplay(item.registrationDeadline, optionsRegistrationDeadline)}</Text>
-        <Text style={[styles.text(SIZES.medium, COLOURS.red), styles.boldText, styles.marginTop10]}>{timeLeft}</Text>
-
-        {/* Registration Section for Seeker */}
-        {timeLeft !== "Registration deadline has passed" && mode !== "Volunteer" && (
-          seekerEstimate > 10 ? (
-            <Text style={[styles.text(SIZES.medium, COLOURS.green), styles.boldText, styles.marginTop10]}>{seekerEstimate} spots left !!!</Text>
-          ) : (
-            <Text style={[styles.text(SIZES.medium, COLOURS.red), styles.boldText, styles.marginTop10]}>{seekerEstimate} spots left</Text>
-          )
-        )}
-
-        {/* Action Buttons for Seeker */}
-        {mode === "Seeker" && (
-          <View>
-            {timeLeft !== "Registration deadline has passed" ? (
-              !hasSeekerRegistered(seekersRegistered, seekerId) ? (
-                seekerEstimate > 0 ? (
-                  <TouchableOpacity style={[styles.button(COLOURS.primary, "60%")]} onPress={registerForEvent}>
-                    <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>Register</Text>
-                  </TouchableOpacity>
-                ) : (
-                  <Text style={[styles.text("center", SIZES.large, COLOURS.red), styles.boldText]}>No spots left</Text>
+          <Text style={[styles.header(SIZES.large), { textAlign: "left", fontWeight: 600, lineSpacing: "15%", padding: 0, margin: 0, paddingVertical: "5%" }]}>Venue</Text>
+          <Text style={[styles.text("left", SIZES.medium, COLOURS.gray), { lineSpacing: "15%", padding: 0, margin: 0 }]}>{item.venue}</Text>
+          {mode !== "Seeker" && (
+            <View>
+              <Text style={[styles.header(SIZES.large), { textAlign: "left", fontWeight: 600, lineSpacing: "15%", padding: 0, margin: 0, paddingTop:"5%",paddingBottom: "1%" }]}>
+                Volunteer Roles left
+              </Text>
+              {Object.entries(item.volunteerRoles).map(([role, count], index) => (
+                count > 0 && (
+                  <Text key={index} style={[styles.text("left", SIZES.large, COLOURS.primary), { lineHeight: SIZES.medium * 2,fontWeight:"bold", padding: 0, margin: 0, paddingTop: "1%" }]}>
+                    {`${role} : ${count}`}
+                  </Text>
                 )
-              ) : (
-                <TouchableOpacity style={[styles.button(COLOURS.black, "60%")]} onPress={withdrawFromEvent}>
-                  <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>Withdraw</Text>
-                </TouchableOpacity>
-              )
+              ))}
+            </View>
+          )}
+          <Text style={[styles.header(SIZES.large), { textAlign: "left", fontWeight: 600, lineSpacing: "15%", padding: 0, margin: 0, paddingVertical: "5%" }]}>Registration Deadline</Text>
+          <Text style={[styles.text("left", SIZES.medium, COLOURS.gray), { lineSpacing: "15%", fontWeight: "bold", padding: 0, margin: 0 }]}>{dateDisplay(item.registrationDeadline, optionsRegistrationDeadline)}</Text>
+          <Text style={[styles.text("left", SIZES.medium, COLOURS.red), { lineSpacing: "15%", fontWeight: "bold", padding: 0, margin: 0, marginTop: 10 }]}>{timeLeft}</Text>
+
+          {timeLeft !== "Registration deadline has passed" && mode!=="Volunteer" &&  (
+            seekerEstimate > 10 ? (
+              <Text style={[styles.text("left", SIZES.medium, COLOURS.green), { lineSpacing: "15%", fontWeight: "bold", padding: 0, margin: 0, marginTop: 10 }]}>{seekerEstimate} spots left !!!</Text>
             ) : (
-              hasSeekerRegistered(seekersRegistered, seekerId) ? (
-                <Text style={[styles.text("center", SIZES.large, COLOURS.primary), styles.boldText]}>You have registered for this event</Text>
-              ) : (
-                <Text style={[styles.text("center", SIZES.large, COLOURS.red), styles.boldText]}>You have not registered for this event</Text>
-              )
-            )}
-          </View>
-        )}
-
-        {/* Admin Controls */}
-        {mode === "Admin" && !editMode && (
-          <View>
-            <TouchableOpacity style={[styles.button(COLOURS.primary, "60%")]} onPress={() => setEditMode(true)}>
-              <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>Edit the details</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.button(COLOURS.red, "60%")]} onPress={deleteEvent}>
-              <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>Delete the event</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
-        {/* Volunteer Section */}
-        {mode === "Volunteer" && (
-          <View>
-            <Text style={[styles.header(SIZES.large), styles.boldText]}>Your Application Status</Text>
-            <Text style={[styles.text(SIZES.medium, COLOURS.primary), styles.boldText]}>
-              {applicationStatus(volunteersRegistered, volunteersApplications, volunteersRejected, volunteerId)}
-            </Text>
-
-            {/* Apply/Withdraw Volunteer */}
-            {timeLeft !== "Registration deadline has passed" && !hasRegistered(volunteersRegistered, volunteerId) && !hasRejected(volunteersRejected, volunteerId) && (
-              !hasApplied(volunteersApplications, volunteerId) ? (
-                <View>
-                  {selectVolunteerRoleMode ? (
-                    <>
-                      <View style={[styles.event_card]}>
-                        <Picker selectedValue={selectedVolunteerRole} onValueChange={(itemValue) => setSelectedVolunteerRole(itemValue)}>
-                          {Object.entries(item.volunteerRoles).map(([role, count]) => (
-                            count > 0 && (
-                              <Picker.Item key={role} label={role} value={role} />
-                            )
-                          ))}
-                        </Picker>
-                      </View>
-                      <TouchableOpacity style={[styles.button(COLOURS.primary, "60%")]} onPress={applyForRole}>
-                        <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>Apply for role</Text>
-                      </TouchableOpacity>
-                    </>
-                  ) : (
-                    <TouchableOpacity style={[styles.button(COLOURS.primary, "60%")]} onPress={selectRole}>
-                      <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>Choose a role</Text>
-                    </TouchableOpacity>
-                  )}
-                </View>
-              ) : (
-                !volunteersRejected[volunteerId] ? (
-                  <View>
-                    <TouchableOpacity style={[styles.button(COLOURS.gray, "80%")]} onPress={withdrawApplication}>
-                      <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>Withdraw from the role</Text>
-                    </TouchableOpacity>
-                  </View>
-                ) : (
-                  <View>
-                    <Text style={[styles.text("center", SIZES.large, COLOURS.primary), styles.boldText]}>
-                      Rejected for {item.volunteersRejected[volunteerId]}
+              <Text style={[styles.text("left", SIZES.medium, COLOURS.red), { lineSpacing: "15%", fontWeight: "bold", padding: 0, margin: 0, marginTop: 10 }]}>{seekerEstimate} spots left</Text>
+            )
+          )}
+<View style={{padding:"3%"}}/> 
+          {mode === "Seeker" && 
+              (timeLeft !== "Registration deadline has passed" ?   (
+                  !hasSeekerRegistered(seekersRegistered, seekerId) ? (
+                    seekerEstimate > 0 ? (
+                  <TouchableOpacity
+                    style={[styles.button(COLOURS.primary,"60%")]}
+                    onPress={registerForEvent}
+                  >
+                    <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
+                      Register
                     </Text>
-                  </View>
-                )
-              )
-            )}
-          </View>
-        )}
+                  </TouchableOpacity>
+                  ):(
+
+                    <Text style={[styles.text("center", SIZES.large, COLOURS.red),{fontWeight:"bold"}]} >No spots left</Text>
+                  )
+                  ):(
+                    <TouchableOpacity
+                    style={[styles.button(COLOURS.black,"60%")]}
+                    onPress={ withdrawFromEvent}
+                  >
+                    <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
+                      Withdraw
+                    </Text>
+                  </TouchableOpacity>
+                  ) 
+                ):(
+                  hasSeekerRegistered(seekersRegistered, seekerId) ? (
+                    <Text style={[styles.text("center", SIZES.large, COLOURS.primary),{fontWeight:"bold"}]}>You have registered for this event</Text>
+                  )
+                  :(
+                   
+                    <Text style={[styles.text("center", SIZES.large, COLOURS.red),{fontWeight:"bold"}]}>You have not registered for this event</Text>)
+                ))
+          }
+          {
+            mode === "Admin" &&
+            (
+              useCase === "display" ? (
+                !editMode && (
+                            <View>
+                              <TouchableOpacity
+                                style={[styles.button(COLOURS.primary,"60%")]}
+                                onPress={() => setEditMode(true)}
+                              >
+                                <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
+                                  Edit the details
+                                </Text>
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                style={[styles.button(COLOURS.red,"60%")]}
+                                onPress={deleteEvent}
+                              >
+                                <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
+                                  Delete the event
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+                          ) 
+                          )
+            :(
+
+             <View>
+              <TouchableOpacity
+               style={[styles.button(COLOURS.primary,"60%"),{marginVertical:"3%",maxWidth:"90%", alignSelf:"center"}]}
+                                onPress={() => setEditMode(true)} >
+                                  <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
+                                  Edit the details
+                                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+               style={[styles.button(COLOURS.green,"60%"), {marginVertical:"3%",maxWidth:"90%", alignSelf:"center"}]}
+                                onPress={acceptSuggestion} >
+                                  <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
+                                  Accept Suggestion
+                                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+               style={[styles.button(COLOURS.red,"60%"), {marginVertical:"3%",maxWidth:"90%", alignSelf:"center"}]}
+                                onPress={deleteSuggestion} >
+                                  <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
+                                  Delete Suggestion
+                                </Text>
+              </TouchableOpacity>
+              </View>
+            ))
+          }
+          {
+            mode === "Volunteer" && ( <View>
+            <Text style={[styles.header(SIZES.large), { textAlign: "left", fontWeight: 600, lineSpacing: "15%", padding: 0, margin: 0, paddingVertical: "5%" }]}>Your Application Status</Text>
+            <Text style={[styles.text("left", SIZES.medium, COLOURS.primary), { lineSpacing: "15%", padding: 0, margin: 0, fontWeight:"bold" }]}>{applicationStatus(volunteersRegistered, volunteersApplications, volunteersRejected, volunteerId)}</Text>
+          </View>)
+          }
+          {/* Above here the code is correct and are not to be changed - you can change the functions applyforevent/ unapplyforevent / selectrole  functions - You need to implement the logic for the volunteer to apply for an event and withdraw from it realtime  */}
+          {mode === "Volunteer" &&
+          (
+timeLeft !== "Registration deadline has passed" && !hasRegistered(volunteersRegistered,volunteerId) && !hasRejected(volunteersRejected,volunteerId) ? (
+  !hasApplied(volunteersApplications, volunteerId)  ? (
+
+
+    <View>
+
+      {selectVolunteerRoleMode && (<>
+<View style={[styles.event_card]}>
+  <Picker 
+    selectedValue={selectedVolunteerRole}
+    onValueChange={(itemValue, itemIndex) => setSelectedVolunteerRole(itemValue)}
+  >
+    {/* Display available roles */}
+    {Object.entries(item.volunteerRoles).map(([role, count]) => (
+      count > 0 && (
+        <Picker.Item key={role} label={role} value={role} />
+      )
+    ))}
+  </Picker>
+</View>
+<TouchableOpacity
+        style={[styles.button(COLOURS.primary, "60%")]}
+        onPress={applyForRole}
+      >
+        <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
+          Apply for role
+        </Text>
+      </TouchableOpacity>
+</>
+)}
+      {!selectVolunteerRoleMode && <TouchableOpacity
+        style={[styles.button(COLOURS.primary, "60%")]}
+        onPress={selectRole}
+      >
+        <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
+          Choose a role
+        </Text>
+      </TouchableOpacity>}
+    </View>
+  ) : (
+    !volunteersRejected[volunteerId] ? (
+    <View>
+      <TouchableOpacity
+        style={styles.button(COLOURS.gray, "80%")}
+        onPress={() => withdrawApplication()}
+      >
+        <Text style={[styles.text("center", SIZES.large, COLOURS.white)]}>
+          Withdraw from the role
+        </Text>
+      </TouchableOpacity>
+    </View>):(
+      <View>
+          <Text style={[styles.text("center", SIZES.large, COLOURS.primary),{fontWeight:"bold"}]}>
+            Rejected for {item.volunteersRejected[volunteerId]}
+          </Text>
       </View>
-    </SafeAreaView>
-  </ScrollView>
-);
+    )
+  )
+) : (
+  <View>
+      <Text style={[styles.text("center", SIZES.large, COLOURS.primary),{fontWeight:"bold"}]}>
+        {
+          
+        }
+      </Text>
+  </View>
+)
+)
 }
+
+{/* // Inside the component's JSX where you display roles and allow selection */}
+
+
+{/* Below here the code is correct and are not to be changed - you can change the functions applyforevent/ unapplyforevent / selectrole  functions - You need to implement the logic for the volunteer to apply for an event and withdraw from it realtime  */}
+
+        </View>
+         </SafeAreaView>
+  </ScrollView>
+      )}
+   </View>
+);
+};
+
 
 export default EventPage ;

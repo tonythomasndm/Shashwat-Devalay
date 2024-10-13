@@ -3,16 +3,15 @@ import { Text, View, TouchableOpacity, Alert } from "react-native";
 import { COLOURS, SIZES, styles } from "../../styles/index";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import { FIRESTORE_DB } from "../../../FirebaseConfig";
-
+import { useNavigation } from "@react-navigation/native";
 const EventSuggestionCard = ({ item }) => {
   const [volunteerName, setVolunteerName] = useState("Loading..."); // Default state
-  const [isApproved, setIsApproved] = useState(false);
   const options = {
     day: "numeric",
     month: "short",
     year: "numeric",
   };
-
+  const navigation = useNavigation();
   // Fetch volunteer name when the component mounts
   useEffect(() => {
     const fetchVolunteerName = async () => {
@@ -75,7 +74,7 @@ const EventSuggestionCard = ({ item }) => {
         try {
           // Delete the document only after approval
           await deleteDoc(item.ref);
-          Alert.alert("Event Approved", "Event suggestion has been approved and deleted.");
+         
         } catch (error) {
           console.error("Error approving and deleting event suggestion:", error);
           Alert.alert("Error", "There was an error deleting the event suggestion.");

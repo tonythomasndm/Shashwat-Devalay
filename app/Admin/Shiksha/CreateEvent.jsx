@@ -1,7 +1,7 @@
 import { EventCreateAndEdit } from "../../components/EventCreateEditAndSuggest";
 const AdminShikshaCreateEvent = () =>{
     return(
-       <EventCreateAndEdit type="Shiksha" />
+       <EventCreateAndEdit type="Shiksha" useCase="Create"/>
     )
 }
 

@@ -131,12 +131,13 @@ const EventsList = ({ route }) => {
               borderWidth: 2,
               borderColor: COLOURS.primary,
               borderRadius: 20,
-              height: "30%", // Fixed height for the dropdown
-              width: "80%", // Width of the container
-              alignSelf: "center", // Center the container
-              justifyContent: "center", // Center content vertically
-              marginBottom: 20, // Add some space below the dropdown
-              overflow: "hidden" // To prevent any overflow if needed
+              height: 50, // Fixed height
+              maxHeight: 50, // Maximum height
+              width: "80%",
+              alignSelf: "center",
+              justifyContent: "center",
+              marginBottom: 20,
+              
             }}
           >
             <RNPickerSelect
@@ -169,6 +170,7 @@ const EventsList = ({ route }) => {
 
           {/* Event List */}
           <FlatList
+          style={{width:"100%"}}
             data={eventsList}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => <EventCard item={item} handlePress={handlePress} />}
