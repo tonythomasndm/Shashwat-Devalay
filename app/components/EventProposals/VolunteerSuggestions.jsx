@@ -5,12 +5,14 @@ import { FIRESTORE_DB } from "../../../FirebaseConfig";
 import { collection, onSnapshot } from "firebase/firestore";
 import EventSuggestionCard from "./EventSuggestionCard";
 import AppContext from "../../../AppContext";
+import RNPickerSelect from "react-native-picker-select";
 
 const VolunteerSuggestions = ({ route }) => {
   const { type } = route.params;
   const [eventSuggestions, setEventSuggestions] = useState([]);
   const [error, setError] = useState("");
   const navigation = useNavigation();
+  const [selectedArea, setSelectedArea] = useState(Services[type]?.[0] || ""); // Default to the first service
   const { infraId } = useContext(AppContext);
 
   useEffect(() => {
@@ -57,7 +59,7 @@ const VolunteerSuggestions = ({ route }) => {
         // Helper function to extract the date part only (strip time component)
 
         return (
-          eventSuggestion.type === type &&
+          eventSuggestion.type === type && eventSuggestion.areaOfInterest === selectedArea &&
           normalizeDate(eventSuggestion.startDate.toDate()) >= normalizeDate(new Date()) && // Ensure the event hasn't started
           eventSuggestion.infraId === infraId
         );
@@ -72,11 +74,56 @@ const VolunteerSuggestions = ({ route }) => {
       {error ? (
         <Text>{error}</Text>
       ) : (
+
+        <>
+          {/* Dropdown to select Area of Interest */}
+          <View
+            style={{
+              borderWidth: 2,
+              borderColor: COLOURS.primary,
+              borderRadius: 20,
+              height: 50, // Fixed height
+              maxHeight: 50, // Maximum height
+              width: "80%",
+              alignSelf: "center",
+              justifyContent: "center",
+              marginBottom: 20,
+              
+            }}
+          >
+            <RNPickerSelect
+              onValueChange={(value) => setSelectedArea(value)}
+              items={Services[type].map((service) => ({
+                label: service,
+                value: service,
+              }))}
+              style={{
+                inputIOS: {
+                  color: COLOURS.primary, // Use appropriate color
+                  paddingVertical: 12,
+                  paddingHorizontal: 10,
+                  borderRadius: 5,
+                  // Add additional styles as necessary
+                },
+                inputAndroid: {
+                  color: COLOURS.primary, // Use appropriate color
+                  paddingVertical: 8,
+                  paddingHorizontal: 10,
+                  borderRadius: 5,
+                  // Add additional styles as necessary
+                },
+              }}
+              placeholder={{ label: "Select Area of Interest", value: null }}
+              value={selectedArea}
+            />
+          </View>
+
         <FlatList
           data={eventSuggestions}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <EventSuggestionCard item={item} />}
         />
+        </>
       )}
     </SafeAreaView>
   );

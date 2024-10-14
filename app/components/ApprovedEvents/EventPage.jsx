@@ -11,6 +11,7 @@ import { COLOURS, SIZES, styles } from "../../styles";
 import AppContext from "../../../AppContext";
 import { useContext, useState, useEffect } from "react";
 import { EventCreateAndEdit} from "../EventCreateEditAndSuggest";
+import { Services } from "../../styles/constants";
 import { FIRESTORE_DB } from "../../../FirebaseConfig";
 import {
   onSnapshot,
@@ -19,7 +20,7 @@ import {
   runTransaction,
 } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
-import { Picker } from "@react-native-picker/picker";
+import RNPickerSelect from "react-native-picker-select";
 
 const EventPage = ({ route }) => {
   const { mode, seekerId, volunteerId } = useContext(AppContext);
