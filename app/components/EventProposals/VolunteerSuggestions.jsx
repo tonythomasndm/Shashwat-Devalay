@@ -6,6 +6,8 @@ import { collection, onSnapshot } from "firebase/firestore";
 import EventSuggestionCard from "./EventSuggestionCard";
 import AppContext from "../../../AppContext";
 import RNPickerSelect from "react-native-picker-select";
+import { Services } from "../../styles/constants";
+
 
 const VolunteerSuggestions = ({ route }) => {
   const { type } = route.params;
