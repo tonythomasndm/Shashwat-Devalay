@@ -513,19 +513,45 @@ timeLeft !== "Registration deadline has passed" && !hasRegistered(volunteersRegi
     <View>
 
       {selectVolunteerRoleMode && (<>
-<View style={[styles.event_card]}>
-  <Picker 
-    selectedValue={selectedVolunteerRole}
-    onValueChange={(itemValue, itemIndex) => setSelectedVolunteerRole(itemValue)}
-  >
-    {/* Display available roles */}
-    {Object.entries(item.volunteerRoles).map(([role, count]) => (
-      count > 0 && (
-        <Picker.Item key={role} label={role} value={role} />
-      )
-    ))}
-  </Picker>
-</View>
+        <View
+            style={{
+              borderWidth: 2,
+              borderColor: COLOURS.primary,
+              borderRadius: 20,
+              height: 50, // Fixed height
+              maxHeight: 50, // Maximum height
+              width: "80%",
+              alignSelf: "center",
+              justifyContent: "center",
+              marginBottom: 20,
+              
+            }}
+          >
+  <RNPickerSelect
+              onValueChange={(value) => setSelectedVolunteerRole(value)}
+              value={selectedVolunteerRole}
+              items={Object.entries(item.volunteerRoles).map(([role, count]) => ({
+                label: role,
+                value: role,
+                key: role,
+                disabled: count === 0 // Disable roles with 0 availability
+              }))}
+              style={{
+                inputIOS: {
+                  color: COLOURS.primary, // Use appropriate color
+                  paddingVertical: 12,
+                  paddingHorizontal: 10,
+                  borderRadius: 5,
+                },
+                inputAndroid: {
+                  color: COLOURS.primary, // Use appropriate color
+                  paddingVertical: 8,
+                  paddingHorizontal: 10,
+                  borderRadius: 5,
+                }
+              }}
+            />
+          </View>
 <TouchableOpacity
         style={[styles.button(COLOURS.primary, "60%")]}
         onPress={applyForRole}
