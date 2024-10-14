@@ -47,6 +47,8 @@ const VolunteerSuggestions = ({ route }) => {
     const filteredEventSuggestions = eventSuggestions
       .filter((eventSuggestion) => {
         // Check if the event's start date is in the future
+        console.log("suggestion:"+eventSuggestion.startDate.toDate());
+        console.log("current:" +new Date())
         return (
           eventSuggestion.type === type &&
           eventSuggestion.startDate.toDate() > new Date() && // Ensure the event hasn't started
