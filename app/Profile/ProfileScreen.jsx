@@ -238,16 +238,6 @@ const ProfileScreen = () => {
               </Text>
             </TouchableOpacity>
           )}
-
-          {editMode && (
-            <TouchableOpacity
-              style={styles.button(COLOURS.red, "60%")}
-              onPress={() => deleteProfile()}>
-              <Text style={styles.text("center", SIZES.large, COLOURS.lightWhite)}>
-                Delete Profile
-              </Text>
-            </TouchableOpacity>
-          )}
         </View>
 
         <TouchableOpacity
