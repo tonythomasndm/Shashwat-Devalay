@@ -54,16 +54,8 @@ const VolunteerSuggestions = ({ route }) => {
   const filterEventSuggestions = (eventSuggestions, type) => {
     const filteredEventSuggestions = eventSuggestions
       .filter((eventSuggestion) => {
-<<<<<<< HEAD
         // Helper function to extract the date part only (strip time component)
-        
-  
-        // Check if the event's start date is in the future (compare only date part)
-=======
-        // Check if the event's start date is in the future
-        console.log("suggestion:"+eventSuggestion.startDate.toDate());
-        console.log("current:" +new Date())
->>>>>>> 51736dfa7068e31be4101a634edc0dd63cf15143
+
         return (
           eventSuggestion.type === type &&
           normalizeDate(eventSuggestion.startDate.toDate()) >= normalizeDate(new Date()) && // Ensure the event hasn't started
