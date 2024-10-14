@@ -16,6 +16,12 @@ const EnrolledEvents = ({ type }) => {
   const [selectedArea, setSelectedArea] = useState(Services[type]?.[0] || ""); // Default to the first service
   const navigation = useNavigation();
 
+  const normalizeDate = (date) => {
+    const normalizedDate = new Date(date);
+    normalizedDate.setHours(0, 0, 0, 0); // Set time to 00:00:00
+    return normalizedDate;
+  };
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {

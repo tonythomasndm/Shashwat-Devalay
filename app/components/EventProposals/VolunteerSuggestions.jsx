@@ -11,7 +11,6 @@ const VolunteerSuggestions = ({ route }) => {
   const { type } = route.params;
   const [eventSuggestions, setEventSuggestions] = useState([]);
   const [error, setError] = useState("");
-  const navigation = useNavigation();
   const [selectedArea, setSelectedArea] = useState(Services[type]?.[0] || ""); // Default to the first service
   const { infraId } = useContext(AppContext);
 
