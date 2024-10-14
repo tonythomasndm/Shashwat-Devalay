@@ -1,12 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState, useContext } from "react";
-import { Text, SafeAreaView, FlatList } from "react-native";
+import { Text, SafeAreaView, FlatList, View } from "react-native";
 import { FIRESTORE_DB } from "../../../FirebaseConfig";
 import { collection, onSnapshot } from "firebase/firestore";
 import EventSuggestionCard from "./EventSuggestionCard";
 import AppContext from "../../../AppContext";
 import RNPickerSelect from "react-native-picker-select";
 import { Services } from "../../styles/constants";
+import { COLOURS, SIZES, styles } from "../../styles";
 
 
 const VolunteerSuggestions = ({ route }) => {
