@@ -68,9 +68,12 @@ const EventSuggest = ({ type }) => {
   const showDatePicker = (type) => {
     setDateType(type); // Set the type ('start' or 'end')
     setDatePickerVisible(true);
+    console.log("calling showDatePicker.............");
+
   };
 
   const hideDatePicker = () => {
+    console.log("calling hide date picker.......");
     setDatePickerVisible(false);
   };
 
@@ -82,6 +85,7 @@ const EventSuggest = ({ type }) => {
     }
     hideDatePicker();
   };
+  console.log("is Date picker visible:"+isDatePickerVisible);
 
   return (
     <ScrollView>
