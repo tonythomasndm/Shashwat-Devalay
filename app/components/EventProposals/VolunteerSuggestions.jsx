@@ -42,21 +42,32 @@ const VolunteerSuggestions = ({ route }) => {
     fetchEventSuggestions();
   }, [type]); // Re-run effect when 'type' prop changes
 
+
+  const normalizeDate = (date) => {
+    const normalizedDate = new Date(date);
+    normalizedDate.setHours(0, 0, 0, 0); // Set time to 00:00:00
+    return normalizedDate;
+  };
+
+  
   // Helper function to filter event suggestions based on current type
   const filterEventSuggestions = (eventSuggestions, type) => {
     const filteredEventSuggestions = eventSuggestions
       .filter((eventSuggestion) => {
-        // Check if the event's start date is in the future
+        // Helper function to extract the date part only (strip time component)
+        
+  
+        // Check if the event's start date is in the future (compare only date part)
         return (
           eventSuggestion.type === type &&
-          eventSuggestion.startDate.toDate() > new Date() && // Ensure the event hasn't started
+          normalizeDate(eventSuggestion.startDate.toDate()) >= normalizeDate(new Date()) && // Ensure the event hasn't started
           eventSuggestion.infraId === infraId
         );
       })
-      .sort((a, b) => a.startDate.toDate() - b.startDate.toDate()); // Sort by startDate
+      .sort((a, b) => normalizeDate(a.startDate.toDate()) - normalizeDate(b.startDate.toDate())); // Sort by startDate
     return filteredEventSuggestions;
   };
-
+  
 
   return (
     <SafeAreaView>
