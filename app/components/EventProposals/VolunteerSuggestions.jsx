@@ -44,7 +44,7 @@ const VolunteerSuggestions = ({ route }) => {
       }
     };
     fetchEventSuggestions();
-  }, [type]); // Re-run effect when 'type' prop changes
+  }, [type, selectedArea]); // Re-run effect when 'type' prop changes
 
 
   const normalizeDate = (date) => {
