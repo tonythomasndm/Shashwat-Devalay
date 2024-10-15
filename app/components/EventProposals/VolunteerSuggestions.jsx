@@ -72,7 +72,7 @@ const VolunteerSuggestions = ({ route }) => {
   
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={[styles.container, { maxWidth: "100%", alignSelf: "center" }]}>
       {error ? (
         <Text>{error}</Text>
       ) : (
